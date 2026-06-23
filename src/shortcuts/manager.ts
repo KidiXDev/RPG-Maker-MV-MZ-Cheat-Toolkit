@@ -61,6 +61,7 @@ export function useShortcutManager() {
         } else if (shortcut.id === 'locations') {
           cheatState.setOpen(true);
           cheatState.setActivePanel('location');
+          cheatState.pushToast('Locations panel opened');
         } else if (shortcut.id === 'quickSave') {
           const slot = shortcut.params?.saveSlot ?? 1;
           void Promise.resolve(quickSave(slot))
@@ -87,19 +88,28 @@ export function useShortcutManager() {
             );
         } else if (shortcut.id === 'gotoTitle') {
           gotoTitle();
+          cheatState.pushToast('Returned to title screen');
         } else if (shortcut.id === 'forceVictory') {
           forceBattleResult('victory');
+          cheatState.pushToast('Battle result forced: Victory');
         } else if (shortcut.id === 'forceDefeat') {
           forceBattleResult('defeat');
+          cheatState.pushToast('Battle result forced: Defeat');
         } else if (shortcut.id === 'forceEscape') {
           forceBattleResult('escape');
+          cheatState.pushToast('Battle result forced: Escape');
         } else if (shortcut.id === 'toggleNoClip') {
           setNoClip(!cheatState.noClip);
           cheatState.setNoClip(!cheatState.noClip);
+          cheatState.pushToast(
+            cheatState.noClip ? 'No-clip enabled' : 'No-clip disabled',
+          );
         } else if (shortcut.id === 'woundParty') {
           woundParty();
+          cheatState.pushToast('Party wounded (HP=1, MP=0, TP=0)');
         } else if (shortcut.id === 'recoverParty') {
           recoverParty();
+          cheatState.pushToast('Party fully recovered');
         } else if (shortcut.id === 'setSpeed') {
           const speed = shortcut.params?.moveSpeed ?? cheatState.moveSpeed;
           setMoveSpeed(speed, true);

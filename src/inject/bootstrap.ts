@@ -1,5 +1,5 @@
 import { isGameReady, patchTouchInputPassThrough } from '../game/engine.ts';
-import { setMoveSpeed, setNoClip } from '../game/cheats/general.ts';
+import { getMoveSpeed, setMoveSpeed, setNoClip } from '../game/cheats/general.ts';
 import { setGameSpeedAll, setGameSpeedBattle } from '../game/cheats/gameSpeed.ts';
 import { patchMessageSkip } from '../game/cheats/message.ts';
 import { setExpMultiplier, setDamageMultiplier } from '../game/cheats/multipliers.ts';
@@ -28,7 +28,20 @@ function applyPersistedRuntimeSettings() {
   const state = useCheatStore.getState();
 
   setNoClip(state.noClip);
-  setMoveSpeed(state.moveSpeed, true);
+
+  // Sync move speed: if the user previously set a non-default speed, reapply it
+  // with lock. Otherwise use the game's actual speed so we don't override the
+  // developer's intended default.
+  if (state.moveSpeed !== 4) {
+    setMoveSpeed(state.moveSpeed, true);
+  } else {
+    // Store the game's actual speed so the slider shows the correct value
+    const actualSpeed = getMoveSpeed();
+    if (actualSpeed !== 4) {
+      useCheatStore.getState().setMoveSpeed(actualSpeed);
+    }
+  }
+
   // Restore both independent game speed values from persistence
   setGameSpeedAll(state.gameSpeedAll);
   setGameSpeedBattle(state.gameSpeedBattle);

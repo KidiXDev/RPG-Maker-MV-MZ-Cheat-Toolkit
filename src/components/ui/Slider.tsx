@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { RotateCcw } from 'lucide-react';
 
 type SliderProps = {
   label: string;
@@ -11,6 +12,10 @@ type SliderProps = {
   /** Format the displayed value. Default: String(value). */
   formatValue?: (value: number) => string;
   onChange(value: number): void;
+  /** Optional reset callback — shows a small icon button next to the value. */
+  onReset?: () => void;
+  /** Accessibility label for the reset button. */
+  resetLabel?: string;
 };
 
 export function Slider({
@@ -22,6 +27,8 @@ export function Slider({
   instant = false,
   formatValue = String,
   onChange,
+  onReset,
+  resetLabel = 'Reset',
 }: SliderProps) {
   const handleInput = useCallback(
     (e: React.SyntheticEvent<HTMLInputElement>) => {
@@ -34,9 +41,22 @@ export function Slider({
     <div className="grid gap-2">
       <div className="flex items-center justify-between">
         <label className="text-sm text-rmc-slate">{label}</label>
-        <span className="font-rmc-mono text-sm text-rmc-ember">
-          {formatValue(value)}
-        </span>
+        <div className="flex items-center gap-1">
+          <span className="font-rmc-mono text-sm text-rmc-ember">
+            {formatValue(value)}
+          </span>
+          {onReset && (
+            <button
+              type="button"
+              className="cursor-pointer rounded p-0.5 text-rmc-slate hover:text-rmc-ember transition-colors"
+              onClick={onReset}
+              aria-label={resetLabel}
+              title={resetLabel}
+            >
+              <RotateCcw size={14} strokeWidth={2} />
+            </button>
+          )}
+        </div>
       </div>
       <input
         type="range"

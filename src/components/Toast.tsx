@@ -38,7 +38,7 @@ function ToastItem({
     <button
       className={`animate-[rmc-slide-in_200ms_ease-out] rounded-lg border px-4 py-3 text-left text-sm shadow-rmc-panel backdrop-blur cursor-pointer ${
         toast.tone === 'danger'
-          ? 'border-rmc-danger/60 bg-rmc-danger/20 text-white'
+          ? 'border-rmc-danger/60 bg-rmc-danger/90 text-white'
           : 'border-rmc-aether/40 bg-rmc-ink/90 text-rmc-mist'
       }`}
       type="button"

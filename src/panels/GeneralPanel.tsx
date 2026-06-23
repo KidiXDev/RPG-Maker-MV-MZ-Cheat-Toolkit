@@ -1,25 +1,22 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
+import { Button, Card, Slider } from '../components/ui/index.ts';
 import { NumberField } from '../components/NumberField.tsx';
 import { Toggle } from '../components/Toggle.tsx';
-import { Button, Card, Slider } from '../components/ui/index.ts';
+import {
+  getGold,
+  getMoveSpeed,
+  resetMoveSpeed,
+  setGold,
+  setMoveSpeed,
+  setNoClip,
+} from '../game/cheats/general.ts';
 import {
   getGameSpeedAll,
   getGameSpeedBattle,
   setGameSpeedAll,
-  setGameSpeedBattle
+  setGameSpeedBattle,
 } from '../game/cheats/gameSpeed.ts';
-import {
-  getGold,
-  setGold,
-  setMoveSpeed,
-  setNoClip
-} from '../game/cheats/general.ts';
-import {
-  gotoTitle,
-  openLoadScene,
-  openSaveScene,
-  reloadGame
-} from '../game/cheats/scene.ts';
+import { gotoTitle, openLoadScene, openSaveScene, reloadGame } from '../game/cheats/scene.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
 import { PanelHeader } from './PanelHeader.tsx';
 
@@ -29,12 +26,18 @@ export function GeneralPanel() {
   const noClip = useCheatStore((state) => state.noClip);
   const setStoredMoveSpeed = useCheatStore((state) => state.setMoveSpeed);
   const setStoredGameSpeedAll = useCheatStore((state) => state.setGameSpeedAll);
-  const setStoredGameSpeedBattle = useCheatStore(
-    (state) => state.setGameSpeedBattle
-  );
+  const setStoredGameSpeedBattle = useCheatStore((state) => state.setGameSpeedBattle);
   const setStoredNoClip = useCheatStore((state) => state.setNoClip);
   const pushToast = useCheatStore((state) => state.pushToast);
   const requestConfirm = useCheatStore((state) => state.requestConfirm);
+
+  // Read the game's actual move speed on mount and sync the store
+  useEffect(() => {
+    const actual = getMoveSpeed();
+    if (actual !== moveSpeed) {
+      setStoredMoveSpeed(actual);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <section>
@@ -60,6 +63,12 @@ export function GeneralPanel() {
               max={10}
               step={1}
               instant
+              onReset={() => {
+                const original = resetMoveSpeed();
+                setStoredMoveSpeed(original);
+                refresh();
+              }}
+              resetLabel="Reset to game default"
               onChange={(value) => {
                 setStoredMoveSpeed(value);
                 setMoveSpeed(value, true);
@@ -87,6 +96,12 @@ export function GeneralPanel() {
               step={0.1}
               instant
               formatValue={(v) => `${v.toFixed(1)}x`}
+              onReset={() => {
+                setGameSpeedAll(1);
+                setStoredGameSpeedAll(1);
+                refresh();
+              }}
+              resetLabel="Reset to 1x"
               onChange={(value) => {
                 setGameSpeedAll(value);
                 setStoredGameSpeedAll(value);
@@ -101,6 +116,12 @@ export function GeneralPanel() {
               step={0.1}
               instant
               formatValue={(v) => `${v.toFixed(1)}x`}
+              onReset={() => {
+                setGameSpeedBattle(1);
+                setStoredGameSpeedBattle(1);
+                refresh();
+              }}
+              resetLabel="Reset to 1x"
               onChange={(value) => {
                 setGameSpeedBattle(value);
                 setStoredGameSpeedBattle(value);
@@ -116,7 +137,7 @@ export function GeneralPanel() {
                     message:
                       'Unsaved progress can be lost when the game changes scene.',
                     confirmLabel: 'Go to title',
-                    onConfirm: gotoTitle
+                    onConfirm: gotoTitle,
                   })
                 }
               >
@@ -137,7 +158,7 @@ export function GeneralPanel() {
                       'Reloading the game runtime can interrupt the current scene.',
                     confirmLabel: 'Reload',
                     tone: 'danger',
-                    onConfirm: reloadGame
+                    onConfirm: reloadGame,
                   })
                 }
               >

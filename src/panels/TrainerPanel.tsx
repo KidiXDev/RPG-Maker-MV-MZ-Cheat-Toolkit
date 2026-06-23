@@ -110,60 +110,46 @@ export function TrainerPanel() {
 
         <Card title="Multipliers">
           <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Slider
-                label="EXP Multiplier"
-                value={getExpMultiplier()}
-                min={0}
-                max={100}
-                step={0.5}
-                instant
-                formatValue={(v) => `${v.toFixed(1)}x`}
-                onChange={(value) => {
-                  setExpMultiplier(value);
-                  setStoredExpMultiplier(value);
-                  refresh();
-                }}
-              />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setExpMultiplier(1);
-                  setStoredExpMultiplier(1);
-                  refresh();
-                }}
-              >
-                Reset EXP
-              </Button>
-            </div>
-            <div className="grid gap-2">
-              <Slider
-                label="Damage Multiplier"
-                value={getDamageMultiplier()}
-                min={0}
-                max={999}
-                step={0.5}
-                instant
-                formatValue={(v) => `${v.toFixed(1)}x`}
-                onChange={(value) => {
-                  setDamageMultiplier(value);
-                  setStoredDamageMultiplier(value);
-                  refresh();
-                }}
-              />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setDamageMultiplier(1);
-                  setStoredDamageMultiplier(1);
-                  refresh();
-                }}
-              >
-                Reset DMG
-              </Button>
-            </div>
+            <Slider
+              label="EXP Multiplier"
+              value={getExpMultiplier()}
+              min={0}
+              max={100}
+              step={0.5}
+              instant
+              formatValue={(v) => `${v.toFixed(1)}x`}
+              onReset={() => {
+                setExpMultiplier(1);
+                setStoredExpMultiplier(1);
+                refresh();
+              }}
+              resetLabel="Reset to 1x"
+              onChange={(value) => {
+                setExpMultiplier(value);
+                setStoredExpMultiplier(value);
+                refresh();
+              }}
+            />
+            <Slider
+              label="Damage Multiplier"
+              value={getDamageMultiplier()}
+              min={0}
+              max={999}
+              step={0.5}
+              instant
+              formatValue={(v) => `${v.toFixed(1)}x`}
+              onReset={() => {
+                setDamageMultiplier(1);
+                setStoredDamageMultiplier(1);
+                refresh();
+              }}
+              resetLabel="Reset to 1x"
+              onChange={(value) => {
+                setDamageMultiplier(value);
+                setStoredDamageMultiplier(value);
+                refresh();
+              }}
+            />
           </div>
         </Card>
 
