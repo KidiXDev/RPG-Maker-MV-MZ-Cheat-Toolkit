@@ -8,6 +8,7 @@ import { setMoveSpeed, setNoClip } from '../game/cheats/general.ts';
 import { startMessageSkip, stopMessageSkip } from '../game/cheats/message.ts';
 import {
   gotoTitle,
+  isSdkBuild,
   openDevTools,
   quickLoad,
   quickSave
@@ -28,6 +29,25 @@ export function useShortcutManager() {
 
       if (shortcut) {
         diagnosticKeyLog(event, 'keydown', true);
+
+        // DevTools only work on NW.js SDK builds.  Production builds
+        // (what RPG Maker MV ships with) open a blank window that can
+        // interfere with the game — skip it entirely and tell the user.
+        if (shortcut.id === 'devTools') {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          if (!isSdkBuild()) {
+            useCheatStore.getState().pushToast(
+              'DevTools require the NW.js SDK build',
+              'danger',
+            );
+            return;
+          }
+          openDevTools();
+          return;
+        }
+
         if (shortcut.id !== 'skipMessage') {
           event.preventDefault();
           event.stopPropagation();
@@ -87,10 +107,6 @@ export function useShortcutManager() {
           cheatState.pushToast(`Move speed set to ${speed}`);
         } else if (shortcut.id === 'skipMessage') {
           startMessageSkip(shortcut.params?.skipSpeed ?? 6);
-        } else if (shortcut.id === 'devTools') {
-          if (!openDevTools()) {
-            cheatState.pushToast('NW.js devtools are unavailable', 'danger');
-          }
         }
         return;
       }
