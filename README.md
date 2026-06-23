@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# RPG Maker MV/MZ Cheat Toolkit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + TypeScript rewrite of an injectable RPG Maker MV/MZ cheat overlay. The overlay runs
+inside the NW.js game runtime so it can read and mutate live `$game*` globals.
 
-Currently, two official plugins are available:
+Translation features from the reference project are intentionally removed.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Development
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname
-      }
-      // other options...
-    }
-  }
-]);
+```bash
+bun install
+bun dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+`bun dev` runs a browser harness with mocked RPG Maker globals for UI development. Press `Ctrl+C`
+or the `RMC` badge to open the overlay.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+## Build The Injectable Bundle
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname
-      }
-      // other options...
-    }
-  }
-]);
+```bash
+bun run build:inject
 ```
+
+Output:
+
+- `dist/cheat.js`
+- `dist/cheat.css`
+
+React and ReactDOM are bundled into the IIFE artifact. Styles are loaded into the overlay Shadow DOM.
+
+## Install Into A Game
+
+Prerequisites:
+
+- Bun or Node 20+
+- A target RPG Maker MV/MZ game that runs on NW.js
+- A completed `bun run build:inject`
+
+Run:
+
+```bash
+bun scripts/install.mjs --game "C:\path\to\Game"
+```
+
+or:
+
+```bash
+npm run install:game -- --game "C:\path\to\Game"
+```
+
+Windows users can also run `scripts/install.bat` and pass or paste the game folder path.
+
+The installer:
+
+- Detects MV via `www/js/main.js`
+- Detects MZ via `js/rmmz_objects.js` and `js/main.js`
+- Creates `main.js.rmc-backup` only if it does not already exist
+- Injects a guarded `RMC-CHEAT-TOOLKIT` loader block into `main.js`
+- Prints a unified-style diff
+- Verifies the only `main.js` delta is the marked loader block
+- Copies `dist/cheat.js` and `dist/cheat.css` into `www/cheat` for MV or `cheat` for MZ
+
+Run the game and press `Ctrl+C` to open the cheat menu.
+
+## Uninstall
+
+```bash
+bun scripts/uninstall.mjs --game "C:\path\to\Game"
+```
+
+or:
+
+```bash
+npm run uninstall:game -- --game "C:\path\to\Game"
+```
+
+The uninstaller restores `main.js` from `main.js.rmc-backup` when available. If the backup is
+missing, it removes only the marked loader block. Cheat files are removed; `cheat-settings/` is kept
+unless `--purge` is passed.
+
+## Troubleshooting
+
+- If install fails, confirm `bun run build:inject` produced `dist/cheat.js` and `dist/cheat.css`.
+- If a game uses an old NW.js runtime, devtools and some modern browser APIs may be unavailable.
+- To reset browser-dev settings, clear local storage entries starting with `rmc-cheat-`.
+- To reset in-game settings, delete the game's `cheat-settings/` folder.

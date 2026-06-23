@@ -1,1 +1,35 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-rmc-abyss: #080b10;
+  --color-rmc-ink: #101722;
+  --color-rmc-panel: #182231;
+  --color-rmc-slate: #9aa8b6;
+  --color-rmc-mist: #e8f0f6;
+  --color-rmc-copper: #c7834b;
+  --color-rmc-ember: #ffb35c;
+  --color-rmc-aether: #75d6ff;
+  --color-rmc-danger: #ff6b6b;
+  --shadow-rmc-panel: 0 24px 80px rgb(0 0 0 / 0.45);
+  --font-rmc-display: 'Trebuchet MS', 'Lucida Grande', sans-serif;
+  --font-rmc-body: 'Segoe UI', 'Aptos', sans-serif;
+  --font-rmc-mono: 'Cascadia Code', 'SFMono-Regular', monospace;
+}
+
+:root {
+  color: var(--color-rmc-mist);
+  background: radial-gradient(circle at top left, #20354a 0, #080b10 38rem);
+  font-family: var(--font-rmc-body);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
