@@ -6,19 +6,27 @@ import { stdin as input, stdout as output } from 'node:process';
 
 const MARKER_START = '/* === RMC-CHEAT-TOOLKIT:START (do not edit) === */';
 const MARKER_END = '/* === RMC-CHEAT-TOOLKIT:END === */';
-const LOADER_BLOCK = `${MARKER_START}
-(function(){var s=document.createElement('script');s.src='cheat/cheat.js';
-s.async=false;document.body.appendChild(s);})();
+
+function buildLoaderBlock({ diagnostic = false } = {}) {
+  const diagnosticLine = diagnostic ? "s.setAttribute('data-rmc-diagnostic','1');" : '';
+  const scriptSrc = diagnostic ? 'cheat/rmc-diagnostic.js' : 'cheat/cheat.js';
+
+  return `${MARKER_START}
+(function(){var s=document.createElement('script');s.src='${scriptSrc}';
+s.async=false;${diagnosticLine}document.body.appendChild(s);})();
 ${MARKER_END}`;
+}
 
 function parseArgs(argv) {
-  const args = { game: '', help: false };
+  const args = { game: '', help: false, diagnostic: false };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
 
     if (arg === '--help' || arg === '-h') {
       args.help = true;
+    } else if (arg === '--diagnostic' || arg === '--debug') {
+      args.diagnostic = true;
     } else if (arg === '--game') {
       args.game = argv[index + 1] ?? '';
       index += 1;
@@ -80,9 +88,14 @@ function stripLoader(content) {
   return content.slice(0, start) + content.slice(blockEnd + (nextNewline?.[0].length ?? 0));
 }
 
-function injectLoader(content) {
-  if (content.includes(MARKER_START)) {
-    return content;
+function injectLoader(content, options = {}) {
+  const loaderBlock = buildLoaderBlock(options);
+  const start = content.indexOf(MARKER_START);
+  const end = content.indexOf(MARKER_END);
+
+  if (start !== -1 && end !== -1) {
+    const blockEnd = end + MARKER_END.length;
+    return content.slice(0, start) + loaderBlock + content.slice(blockEnd);
   }
 
   const lines = content.split(/\r?\n/);
@@ -95,7 +108,7 @@ function injectLoader(content) {
     })
   );
 
-  lines.splice(insertAfter + 1, 0, LOADER_BLOCK);
+  lines.splice(insertAfter + 1, 0, loaderBlock);
   return lines.join(newline);
 }
 
@@ -122,7 +135,7 @@ function printDiff(before, after, filePath) {
   }
 }
 
-function copyBundle(cheatDir) {
+function copyBundle(cheatDir, options = {}) {
   const distDir = path.resolve('dist');
   const requiredFiles = ['cheat.js', 'cheat.css'];
 
@@ -140,6 +153,14 @@ function copyBundle(cheatDir) {
     fs.copyFileSync(path.join(distDir, file), path.join(cheatDir, file));
   }
 
+  const diagnosticLoader = path.join(cheatDir, 'rmc-diagnostic.js');
+
+  if (options.diagnostic) {
+    fs.copyFileSync(path.resolve('scripts', 'rmc-diagnostic.js'), diagnosticLoader);
+  } else if (fs.existsSync(diagnosticLoader)) {
+    fs.unlinkSync(diagnosticLoader);
+  }
+
   const assetsDir = path.join(distDir, 'assets');
 
   if (fs.existsSync(assetsDir)) {
@@ -151,7 +172,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
 
   if (args.help) {
-    console.log('Usage: node scripts/install.mjs --game "C:\\path\\to\\Game"');
+    console.log('Usage: node scripts/install.mjs --game "C:\\path\\to\\Game" [--diagnostic]');
     return;
   }
 
@@ -161,6 +182,7 @@ async function main() {
 
   console.log(`Detected RPG Maker ${game.engine}`);
   console.log(`main.js: ${game.mainJs}`);
+  console.log(`diagnostic logging: ${args.diagnostic ? 'enabled' : 'disabled'}`);
 
   if (!fs.existsSync(backupPath)) {
     fs.copyFileSync(game.mainJs, backupPath);
@@ -171,25 +193,28 @@ async function main() {
 
   const backup = fs.readFileSync(backupPath, 'utf8');
   const current = fs.readFileSync(game.mainJs, 'utf8');
-  const injected = injectLoader(current);
+  const injected = injectLoader(current, { diagnostic: args.diagnostic });
 
   if (injected !== current) {
     fs.writeFileSync(game.mainJs, injected, 'utf8');
   } else {
-    console.log('Loader already present; injection skipped.');
+    console.log('Loader already up to date; injection skipped.');
   }
 
   const modified = fs.readFileSync(game.mainJs, 'utf8');
 
-  if (modified !== injectLoader(backup)) {
+  if (modified !== injectLoader(backup, { diagnostic: args.diagnostic })) {
     fs.copyFileSync(backupPath, game.mainJs);
     throw new Error('main.js changed outside the loader block. Restored backup and aborted.');
   }
 
   printDiff(backup, modified, game.mainJs);
-  copyBundle(game.cheatDir);
+  copyBundle(game.cheatDir, { diagnostic: args.diagnostic });
 
   console.log(`Copied bundle to ${game.cheatDir}`);
+  if (args.diagnostic) {
+    console.log(`Diagnostic log: ${path.join(game.cheatDir, 'rmc-diagnostic.log')}`);
+  }
   console.log('Install complete. Press Ctrl+C in game to open the overlay.');
 }
 

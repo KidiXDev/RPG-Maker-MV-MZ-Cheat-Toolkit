@@ -5,6 +5,7 @@ import { startMessageSkip, stopMessageSkip } from '../game/cheats/message.ts';
 import { gotoTitle, openDevTools, quickLoad, quickSave } from '../game/cheats/scene.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
 import { useShortcutStore } from '../store/useShortcutStore.ts';
+import { diagnosticKeyLog } from '../inject/diagnostics.ts';
 import { eventToCombo } from './keycodes.ts';
 
 export function useShortcutManager() {
@@ -18,6 +19,7 @@ export function useShortcutManager() {
 
       const combo = eventToCombo(event);
       const shortcut = shortcuts.find((candidate) => candidate.combo === combo);
+      diagnosticKeyLog(event, 'keydown', Boolean(shortcut));
 
       if (!shortcut) {
         return;
@@ -90,6 +92,7 @@ export function useShortcutManager() {
 
       const combo = eventToCombo(event);
       const skipShortcut = shortcuts.find((shortcut) => shortcut.id === 'skipMessage');
+      diagnosticKeyLog(event, 'keyup', skipShortcut?.combo === combo || event.key === 'Shift');
 
       if (skipShortcut?.combo === combo || event.key === 'Shift') {
         stopMessageSkip();

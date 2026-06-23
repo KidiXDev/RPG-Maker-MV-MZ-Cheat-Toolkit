@@ -62,6 +62,22 @@ The installer:
 
 Run the game and press `Ctrl+C` to open the cheat menu.
 
+### Diagnostic Logging
+
+For runtime debugging, install with diagnostic logging enabled:
+
+```bash
+bun scripts/install.mjs --game "C:\path\to\Game" --diagnostic
+```
+
+This writes `rmc-diagnostic.log` beside the installed cheat bundle:
+
+- MV: `www/cheat/rmc-diagnostic.log`
+- MZ: `cheat/rmc-diagnostic.log`
+
+The log records bundle startup, game-ready wait completion, overlay mount state, global runtime
+errors, and shortcut key matches. Reinstall without `--diagnostic` to disable logging.
+
 ## Uninstall
 
 ```bash
