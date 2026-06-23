@@ -3,6 +3,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const MARKER_START = '/* === RMC-CHEAT-TOOLKIT:START (do not edit) === */';
 const MARKER_END = '/* === RMC-CHEAT-TOOLKIT:END === */';
@@ -136,7 +140,7 @@ function printDiff(before, after, filePath) {
 }
 
 function copyBundle(cheatDir, options = {}) {
-  const distDir = path.resolve('dist');
+  const distDir = path.resolve(__dirname, '..', 'dist');
   const requiredFiles = ['cheat.js'];
   const optionalFiles = ['cheat.css'];
 
@@ -168,7 +172,7 @@ function copyBundle(cheatDir, options = {}) {
   const diagnosticLoader = path.join(cheatDir, 'rmc-diagnostic.js');
 
   if (options.diagnostic) {
-    fs.copyFileSync(path.resolve('scripts', 'rmc-diagnostic.js'), diagnosticLoader);
+    fs.copyFileSync(path.resolve(__dirname, 'rmc-diagnostic.js'), diagnosticLoader);
   } else if (fs.existsSync(diagnosticLoader)) {
     fs.unlinkSync(diagnosticLoader);
   }
