@@ -106,9 +106,8 @@ Compile the TypeScript and React code into a single client-side script:
 ```bash
 bun run build:inject
 ```
-This generates the standalone files:
-- `dist/cheat.js` — Self-contained IIFE bundling React, ReactDOM, and toolkit logic.
-- `dist/cheat.css` — Compiled Tailwind CSS 4 stylesheet injected into the Shadow DOM.
+This generates the standalone bundle:
+- `dist/cheat.js` — Self-contained, single-file IIFE bundling React, ReactDOM, toolkit logic, and Tailwind CSS 4 styles (injected inline into the Shadow DOM overlay).
 
 ### Alternative Installation via Command Line
 For advanced users who prefer specifying target directories via command line flags:
