@@ -27,7 +27,7 @@ export function ConfirmDialog({ portalRoot }: ConfirmDialogProps) {
     <div
       ref={backdropRef}
       tabIndex={-1}
-      className="pointer-events-auto fixed inset-0 z-[10001] grid place-items-center bg-rmc-abyss/75 p-4 text-rmc-mist backdrop-blur-sm"
+      className="pointer-events-auto fixed inset-0 z-10001 grid place-items-center bg-rmc-abyss/75 p-4 text-rmc-mist backdrop-blur-sm"
       onClick={stopPropagation}
       onKeyDown={stopPropagation}
     >
@@ -35,8 +35,12 @@ export function ConfirmDialog({ portalRoot }: ConfirmDialogProps) {
         <p className="font-rmc-mono text-xs tracking-[0.28em] text-rmc-aether uppercase">
           Confirm action
         </p>
-        <h3 className="mt-2 font-rmc-display text-2xl font-black">{confirmDialog.title}</h3>
-        <p className="mt-3 text-sm leading-6 text-rmc-slate">{confirmDialog.message}</p>
+        <h3 className="mt-2 font-rmc-display text-2xl font-black">
+          {confirmDialog.title}
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-rmc-slate">
+          {confirmDialog.message}
+        </p>
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
           <button
             className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-rmc-slate hover:border-rmc-aether hover:text-rmc-mist cursor-pointer"

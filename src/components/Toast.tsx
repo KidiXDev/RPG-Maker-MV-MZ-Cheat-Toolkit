@@ -9,7 +9,7 @@ type ToastViewportProps = {
 export function ToastViewport({ portalRoot }: ToastViewportProps) {
   const toasts = useCheatStore((state) => state.toasts);
   const content = (
-    <div className="pointer-events-auto fixed top-5 right-5 z-[10000] grid w-80 gap-2">
+    <div className="pointer-events-auto fixed top-5 right-5 z-10000 grid w-80 gap-2">
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} />
       ))}
@@ -19,7 +19,11 @@ export function ToastViewport({ portalRoot }: ToastViewportProps) {
   return portalRoot ? createPortal(content, portalRoot) : content;
 }
 
-function ToastItem({ toast }: { toast: { id: string; message: string; tone: 'info' | 'danger' } }) {
+function ToastItem({
+  toast
+}: {
+  toast: { id: string; message: string; tone: 'info' | 'danger' };
+}) {
   const dismissToast = useCheatStore((state) => state.dismissToast);
 
   useEffect(() => {

@@ -36,7 +36,7 @@ function App({ portalRoot }: AppProps) {
   return (
     <div className="pointer-events-none">
       <button
-        className="pointer-events-auto fixed right-5 bottom-5 z-[9998] rounded-full border border-rmc-copper/60 bg-rmc-ink/90 px-4 py-3 text-sm font-semibold tracking-[0.2em] text-rmc-ember shadow-rmc-panel backdrop-blur transition hover:border-rmc-ember focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rmc-ember"
+        className="pointer-events-auto fixed right-5 bottom-5 z-9998 rounded-full border border-rmc-copper/60 bg-rmc-ink/90 px-4 py-3 text-sm font-semibold tracking-[0.2em] text-rmc-ember shadow-rmc-panel backdrop-blur transition hover:border-rmc-ember focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rmc-ember"
         type="button"
         onClick={toggleOpen}
       >

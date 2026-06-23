@@ -24,11 +24,18 @@ export function DataTable<T>({
   getRowId
 }: DataTableProps<T>) {
   const [query, setQuery] = useState('');
-  const [sort, setSort] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [sort, setSort] = useState<{
+    key: string;
+    direction: 'asc' | 'desc';
+  } | null>(null);
   const deferredQuery = useDeferredValue(query);
   const normalizedQuery = deferredQuery.trim().toLowerCase();
-  const filteredRows = normalizedQuery ? rows.filter((row) => filter(row, normalizedQuery)) : rows;
-  const sortColumn = sort ? columns.find((column) => column.key === sort.key) : undefined;
+  const filteredRows = normalizedQuery
+    ? rows.filter((row) => filter(row, normalizedQuery))
+    : rows;
+  const sortColumn = sort
+    ? columns.find((column) => column.key === sort.key)
+    : undefined;
   const visibleRows =
     sortColumn?.sortValue && sort
       ? [...filteredRows].sort((left, right) => {
@@ -37,7 +44,9 @@ export function DataTable<T>({
           const result =
             typeof leftValue === 'number' && typeof rightValue === 'number'
               ? leftValue - rightValue
-              : String(leftValue).localeCompare(String(rightValue), undefined, { numeric: true });
+              : String(leftValue).localeCompare(String(rightValue), undefined, {
+                  numeric: true
+                });
 
           return sort.direction === 'asc' ? result : -result;
         })
@@ -74,7 +83,10 @@ export function DataTable<T>({
           <thead className="text-xs tracking-[0.18em] text-rmc-aether uppercase">
             <tr>
               {columns.map((column) => (
-                <th className={`sticky top-0 bg-rmc-panel px-4 py-3 font-semibold z-10 ${column.className ?? ''}`} key={column.key}>
+                <th
+                  className={`sticky top-0 bg-rmc-panel px-4 py-3 font-semibold z-10 ${column.className ?? ''}`}
+                  key={column.key}
+                >
                   {column.sortValue ? (
                     <button
                       className="grid grid-flow-col auto-cols-max items-center gap-1.5 text-left uppercase hover:text-rmc-ember transition-colors duration-150 cursor-pointer"
@@ -83,7 +95,11 @@ export function DataTable<T>({
                     >
                       <span>{column.header}</span>
                       <span className="text-rmc-ember font-normal">
-                        {sort?.key === column.key ? (sort.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        {sort?.key === column.key
+                          ? sort.direction === 'asc'
+                            ? '▲'
+                            : '▼'
+                          : '↕'}
                       </span>
                     </button>
                   ) : (
@@ -95,9 +111,15 @@ export function DataTable<T>({
           </thead>
           <tbody>
             {visibleRows.map((row) => (
-              <tr className="border-t border-white/10 odd:bg-white/[0.03]" key={getRowId(row)}>
+              <tr
+                className="border-t border-white/10 odd:bg-white/3"
+                key={getRowId(row)}
+              >
                 {columns.map((column) => (
-                  <td className={`px-4 py-3 align-middle text-rmc-mist ${column.className ?? ''}`} key={column.key}>
+                  <td
+                    className={`px-4 py-3 align-middle text-rmc-mist ${column.className ?? ''}`}
+                    key={column.key}
+                  >
                     {column.render(row)}
                   </td>
                 ))}

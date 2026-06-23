@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { useCheatStore, type PanelId } from '../store/useCheatStore.ts';
 import { BattlePanel } from '../panels/BattlePanel.tsx';
 import { GeneralPanel } from '../panels/GeneralPanel.tsx';
 import { InventoryPanel } from '../panels/InventoryPanel.tsx';
@@ -9,6 +8,7 @@ import { StatsPanel } from '../panels/StatsPanel.tsx';
 import { SwitchesPanel } from '../panels/SwitchesPanel.tsx';
 import { TeleportPanel } from '../panels/TeleportPanel.tsx';
 import { VariablesPanel } from '../panels/VariablesPanel.tsx';
+import { useCheatStore, type PanelId } from '../store/useCheatStore.ts';
 
 type CheatModalProps = {
   portalRoot?: HTMLElement;
@@ -51,7 +51,7 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
     <div
       ref={backdropRef}
       tabIndex={-1}
-      className="pointer-events-auto fixed inset-0 z-[9999] grid place-items-center bg-rmc-abyss/70 p-3 text-rmc-mist backdrop-blur-md"
+      className="pointer-events-auto fixed inset-0 z-9999 grid place-items-center bg-rmc-abyss/70 p-3 text-rmc-mist backdrop-blur-md"
       onClick={stopPropagation}
       onKeyDown={handleKeyDown}
     >
@@ -59,7 +59,9 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
         <aside className="border-b border-white/10 bg-black/20 p-3 md:border-r md:border-b-0 md:p-3">
           <div className="grid grid-cols-[1fr_auto] items-start gap-2">
             <div>
-              <h2 className="font-rmc-display text-base font-black tracking-tight">RMC Toolkit</h2>
+              <h2 className="font-rmc-display text-base font-black tracking-tight">
+                RMC Toolkit
+              </h2>
             </div>
             <button
               className="rounded-full border border-white/10 px-2 py-0.5 text-[0.6rem] text-rmc-slate hover:border-rmc-ember hover:text-rmc-ember cursor-pointer"
@@ -94,7 +96,12 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
   );
 }
 
-function PanelSwitch({ activePanel }: { activePanel: PanelId; portalRoot?: HTMLElement }) {
+function PanelSwitch({
+  activePanel
+}: {
+  activePanel: PanelId;
+  portalRoot?: HTMLElement;
+}) {
   if (activePanel === 'battle') {
     return <BattlePanel />;
   }
