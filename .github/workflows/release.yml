@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Injectable Bundle
+        run: bun run build:inject
+
+      - name: Create Release Package
+        run: |
+          mkdir -p release/scripts
+          mkdir -p release/dist
+          cp dist/cheat.js release/dist/
+          cp dist/cheat.css release/dist/
+          cp scripts/install.bat release/scripts/
+          cp scripts/install.mjs release/scripts/
+          cp scripts/install.sh release/scripts/
+          cp scripts/rmc-diagnostic.js release/scripts/
+          cp scripts/uninstall.bat release/scripts/
+          cp scripts/uninstall.mjs release/scripts/
+          cp scripts/uninstall.sh release/scripts/
+          cp LICENSE release/
+          cp README.md release/
+          cd release
+          zip -r ../rpg-maker-cheat-toolkit-${{ github.ref_name }}.zip .
+          cd ..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: rpg-maker-cheat-toolkit-${{ github.ref_name }}.zip
+          draft: false
+          prerelease: false
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## 🎮 RPG Maker MV/MZ Cheat Toolkit - ${{ github.ref_name }}
+            
+            A modern, high-performance, and feature-rich injectable cheat overlay for RPG Maker MV and MZ games.
+            
+            ### 📥 Quick Installation Guide
+            
+            Follow these simple steps to install the cheat overlay into your game:
+            
+            1. **Install Node.js:**
+               Make sure you have Node.js installed on your computer. If not, download and install it from [nodejs.org](https://nodejs.org/).
+               
+            2. **Download & Extract:**
+               Download the `rpg-maker-cheat-toolkit-${{ github.ref_name }}.zip` archive from the assets list below and extract it to a folder on your computer.
+               
+            3. **Run the Installer:**
+               - Open the extracted folder and navigate into the `scripts/` folder.
+               - **Windows:** Double-click `install.bat`.
+               - **macOS / Linux:** Open a terminal in the folder and run `node scripts/install.mjs`.
+               
+            4. **Select Your Game:**
+               Copy and paste the path to your RPG Maker game folder (the directory containing the game executable and files like `package.json` or `www/`) into the terminal prompt, and press **Enter**.
+               
+            5. **Play & Open Overlay:**
+               Launch the game and press **`Ctrl + C`** on your keyboard (or click the floating **RMC** badge in the bottom-right corner) to open the cheat menu!
+            
+            ### 🗑️ Uninstalling
+            To remove the cheat toolkit, run the `uninstall.bat` (Windows) or `node scripts/uninstall.mjs` (macOS/Linux) script inside the `scripts/` directory and enter your game path.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
