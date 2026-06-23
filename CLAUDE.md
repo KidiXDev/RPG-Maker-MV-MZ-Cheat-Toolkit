@@ -19,8 +19,8 @@ React 19 + TypeScript SPA built with Vite. The app is a cheat toolkit for RPG Ma
 
 **Entry flow:** `index.html` → `src/main.tsx` → `src/App.tsx`
 
-- `src/components/` — UI components (currently empty)
-- `src/hooks/` — custom React hooks (currently empty)
+- `src/components/` — UI components
+- `src/hooks/` — custom React hooks
 - `src/index.css` — global styles, imports Tailwind CSS 4 via `@import`
 
 **Path alias:** `@/` resolves to `./src/` (configured in both `vite.config.ts` and `tsconfig.app.json`).
