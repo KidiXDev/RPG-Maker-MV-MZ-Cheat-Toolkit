@@ -23,12 +23,12 @@ export function SwitchesPanel() {
       <PanelHeader title="Switches" description="Toggle RPG Maker switches. Translation features are intentionally omitted." />
       <div className="mb-4 grid gap-2 md:grid-cols-[1fr_auto_auto_auto]">
         <input
-          className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
+          className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-3 py-1.5 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
           placeholder="Search switches"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
-        <label className="grid grid-flow-col auto-cols-max cursor-pointer items-center gap-2 rounded-lg bg-white/10 px-4 py-3 text-sm">
+        <label className="grid grid-flow-col auto-cols-max cursor-pointer items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-sm">
           <input className="h-5 w-5 accent-rmc-ember" checked={hideNameless} type="checkbox" onChange={(event) => setHideNameless(event.target.checked)} />
           <span>Hide nameless</span>
         </label>

@@ -14,7 +14,7 @@ export function VariablesPanel() {
       <PanelHeader title="Variables" description="Read and write RPG Maker variables. Translation features are intentionally omitted." />
       <div className="mb-4 grid grid-flow-col auto-cols-max items-center gap-2">
         <Button variant="ghost" onClick={refresh}>Reload</Button>
-        <label className="grid grid-flow-col auto-cols-max items-center gap-2 rounded-lg bg-white/10 px-4 py-3 text-sm cursor-pointer">
+        <label className="grid grid-flow-col auto-cols-max items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-sm cursor-pointer">
           <input className="h-5 w-5 accent-rmc-ember" checked={hideNameless} type="checkbox" onChange={(event) => setHideNameless(event.target.checked)} />
           <span>Hide nameless</span>
         </label>

@@ -17,7 +17,7 @@ export function Input({ label, error, className = '', id, ...props }: InputProps
       ) : null}
       <input
         id={inputId}
-        className={`rounded-lg border bg-rmc-abyss px-4 py-3 text-sm text-rmc-mist outline-none transition focus:border-rmc-aether ${
+        className={`rounded-lg border bg-rmc-abyss px-3 py-1.5 text-sm text-rmc-mist outline-none transition focus:border-rmc-aether ${
           error ? 'border-rmc-danger/60' : 'border-white/10'
         } ${className}`}
         {...props}

@@ -29,12 +29,12 @@ export function ShortcutsPanel() {
       <PanelHeader title="Shortcuts" description="Customize key combos. Required shortcuts stay present when defaults are restored." />
       <div className="mb-4 grid gap-2 md:grid-cols-[1fr_auto_auto]">
         <input
-          className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
+          className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-3 py-1.5 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
           placeholder="Search shortcuts"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
-        <label className="grid grid-flow-col auto-cols-max cursor-pointer items-center gap-2 rounded-lg bg-white/10 px-4 py-3 text-sm">
+        <label className="grid grid-flow-col auto-cols-max cursor-pointer items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-sm">
           <input className="h-5 w-5 accent-rmc-ember" checked={hideDescriptions} type="checkbox" onChange={(event) => setHideDescriptions(event.target.checked)} />
           <span>Hide descriptions</span>
         </label>
@@ -50,7 +50,7 @@ export function ShortcutsPanel() {
               {!hideDescriptions ? <span className="mt-1 block text-sm text-rmc-slate">{shortcut.description}</span> : null}
               {shortcut.required ? <Badge variant="warning" className="mt-2">Required</Badge> : null}
             </span>
-            <div className="grid gap-2">
+            <div className="grid gap-2 items-start">
               <KeyInputField value={shortcut.combo} onChange={(value) => setShortcut(shortcut.id, value)} />
               {shortcut.id === 'quickSave' || shortcut.id === 'quickLoad' ? (
                 <ParamInput label="Slot" value={shortcut.params?.saveSlot ?? 1} onChange={(value) => setShortcutParam(shortcut.id, 'saveSlot', value)} />

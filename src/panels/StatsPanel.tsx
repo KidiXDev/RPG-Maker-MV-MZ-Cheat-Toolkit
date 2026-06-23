@@ -44,7 +44,7 @@ export function StatsPanel() {
           title={selectedActor.name()}
           actions={
             <>
-              <label className="grid grid-flow-col auto-cols-max items-center gap-2 rounded-lg bg-rmc-abyss px-3 py-2 text-sm cursor-pointer">
+              <label className="grid grid-flow-col auto-cols-max items-center gap-2 rounded-lg bg-rmc-abyss px-3 py-1.5 text-sm cursor-pointer">
                 <input className="h-5 w-5 accent-rmc-ember" checked={isGodModeEnabled(selectedActor.actorId())} type="checkbox" onChange={(event) => { toggleGodMode(selectedActor.actorId(), event.target.checked); refresh(); }} />
                 <span>God mode</span>
               </label>

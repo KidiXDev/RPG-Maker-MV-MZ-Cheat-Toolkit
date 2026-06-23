@@ -69,7 +69,7 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
               Esc
             </button>
           </div>
-          <nav className="mt-3 grid max-h-[40vh] grid-cols-2 gap-0.5 overflow-y-auto md:max-h-none md:grid-cols-1 md:gap-0.5">
+          <nav className="mt-3 grid max-h-[40vh] grid-cols-2 gap-2 overflow-y-auto md:max-h-none md:grid-cols-1 md:gap-2">
             {panels.map((panel) => (
               <button
                 className={`rounded-lg px-3 py-1.5 text-left text-xs transition cursor-pointer ${

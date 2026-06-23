@@ -64,7 +64,7 @@ export function DataTable<T>({
   return (
     <div className="grid gap-3">
       <input
-        className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
+        className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-3 py-1.5 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
         placeholder={searchPlaceholder}
         value={query}
         onChange={(event) => setQuery(event.target.value)}

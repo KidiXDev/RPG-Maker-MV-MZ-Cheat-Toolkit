@@ -39,14 +39,14 @@ export function ConfirmDialog({ portalRoot }: ConfirmDialogProps) {
         <p className="mt-3 text-sm leading-6 text-rmc-slate">{confirmDialog.message}</p>
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
           <button
-            className="rounded-lg border border-white/10 px-4 py-3 text-sm text-rmc-slate hover:border-rmc-aether hover:text-rmc-mist"
+            className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-rmc-slate hover:border-rmc-aether hover:text-rmc-mist cursor-pointer"
             type="button"
             onClick={closeConfirm}
           >
             Cancel
           </button>
           <button
-            className={`rounded-lg px-4 py-3 text-sm font-semibold ${
+            className={`rounded-lg px-3 py-1.5 text-sm font-semibold cursor-pointer ${
               confirmDialog.tone === 'danger'
                 ? 'bg-rmc-danger text-white'
                 : 'bg-rmc-ember text-rmc-abyss'

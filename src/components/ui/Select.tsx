@@ -24,7 +24,7 @@ export function Select({ label, options, error, className = '', id, ...props }: 
       <div className="relative">
         <select
           id={selectId}
-          className={`w-full appearance-none rounded-lg border bg-rmc-abyss px-4 py-3 pr-10 text-sm text-rmc-mist outline-none transition focus:border-rmc-aether ${
+          className={`w-full appearance-none rounded-lg border bg-rmc-abyss px-3 py-1.5 pr-10 text-sm text-rmc-mist outline-none transition focus:border-rmc-aether ${
             error ? 'border-rmc-danger/60' : 'border-white/10'
           } ${className}`}
           {...props}

@@ -27,11 +27,11 @@ export function LocationPanel() {
         Current map: <span className="font-rmc-mono text-rmc-aether">{currentLocationLabel()}</span>
       </div>
       <div className="mb-5 grid gap-2 sm:grid-cols-[1fr_auto]">
-        <input className="min-w-0 rounded-lg border border-white/10 bg-rmc-abyss px-4 py-3 text-rmc-mist outline-none transition focus:border-rmc-aether" value={alias} onChange={(event) => setAlias(event.target.value)} />
+        <input className="min-w-0 rounded-lg border border-white/10 bg-rmc-abyss px-3 py-1.5 text-rmc-mist outline-none transition focus:border-rmc-aether" value={alias} onChange={(event) => setAlias(event.target.value)} />
         <Button variant="primary" onClick={() => { const location = captureCurrentLocation(alias || 'Checkpoint'); if (location) { addLocation(location); pushToast('Location saved'); } }}>Save current</Button>
       </div>
       <input
-        className="mb-4 w-full rounded-lg border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
+        className="mb-4 w-full rounded-lg border border-white/10 bg-rmc-abyss/80 px-3 py-1.5 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
         placeholder="Search saved locations"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
