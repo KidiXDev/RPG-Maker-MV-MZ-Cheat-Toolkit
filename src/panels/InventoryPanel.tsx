@@ -14,7 +14,7 @@ export function InventoryPanel() {
   return (
     <section>
       <PanelHeader title="Inventory" description="Search items, weapons, and armor, then set owned quantities." />
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 grid grid-flow-col auto-cols-max gap-2">
         <Button variant="ghost" onClick={refresh}>Reload</Button>
         {kinds.map((candidate) => (
           <Button variant={kind === candidate ? 'primary' : 'ghost'} key={candidate} onClick={() => setKind(candidate)}>{candidate}</Button>

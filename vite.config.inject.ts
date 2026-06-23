@@ -27,7 +27,6 @@ export default defineConfig({
       output: {
         banner:
           "if (typeof globalThis === 'undefined') { var globalThis = typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : this; }\nif (!String.prototype.trimStart) { String.prototype.trimStart = String.prototype.trimLeft || function () { return this.replace(/^\\s+/, ''); }; }\nif (!String.prototype.trimEnd) { String.prototype.trimEnd = String.prototype.trimRight || function () { return this.replace(/\\s+$/, ''); }; }\nif (!Object.fromEntries) { Object.fromEntries = function (entries) { var object = {}; var i; var entry; if (entries && typeof entries.length === 'number') { for (i = 0; i < entries.length; i += 1) { object[entries[i][0]] = entries[i][1]; } return object; } for (entry of entries) { object[entry[0]] = entry[1]; } return object; }; }",
-        inlineDynamicImports: true,
         assetFileNames: (assetInfo) =>
           assetInfo.name?.endsWith('.css') ? 'cheat.css' : 'assets/[name][extname]'
       }

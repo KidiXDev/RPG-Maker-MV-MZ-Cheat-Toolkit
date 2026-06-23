@@ -48,9 +48,9 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
       onClick={stopPropagation}
       onKeyDown={stopPropagation}
     >
-      <section className="grid h-[min(820px,94vh)] w-[min(1180px,96vw)] animate-[rmc-fade-in_200ms_ease-out] grid-cols-1 overflow-hidden rounded-2xl border border-rmc-copper/30 bg-[linear-gradient(135deg,rgba(24,34,49,0.98),rgba(8,11,16,0.98)),radial-gradient(circle_at_20%_0%,rgba(255,179,92,0.24),transparent_24rem)] shadow-rmc-panel md:grid-cols-[17rem_1fr]">
+      <section className="grid w-[96vw] h-[92vh] md:w-[940px] md:h-[620px] animate-[rmc-fade-in_200ms_ease-out] grid-cols-1 overflow-hidden rounded-2xl border border-rmc-copper/30 bg-[linear-gradient(135deg,rgba(24,34,49,0.98),rgba(8,11,16,0.98)),radial-gradient(circle_at_20%_0%,rgba(255,179,92,0.24),transparent_24rem)] shadow-rmc-panel md:grid-cols-[17rem_minmax(0,1fr)]">
         <aside className="border-b border-white/10 bg-black/20 p-4 md:border-r md:border-b-0">
-          <div className="flex items-start justify-between gap-4">
+          <div className="grid grid-cols-[1fr_auto] items-start gap-4">
             <div>
               <p className="font-rmc-mono text-[0.65rem] tracking-[0.35em] text-rmc-copper uppercase">
                 Runtime overlay
@@ -58,7 +58,7 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
               <h2 className="mt-2 font-rmc-display text-2xl font-black">RMC Toolkit</h2>
             </div>
             <button
-              className="rounded-full border border-white/10 px-3 py-1 text-rmc-slate hover:border-rmc-ember hover:text-rmc-ember"
+              className="rounded-full border border-white/10 px-3 py-1 text-rmc-slate hover:border-rmc-ember hover:text-rmc-ember cursor-pointer"
               type="button"
               onClick={() => setOpen(false)}
             >
@@ -68,10 +68,10 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
           <nav className="mt-6 grid max-h-[40vh] grid-cols-2 gap-1 overflow-y-auto md:max-h-none md:grid-cols-1 md:gap-1">
             {panels.map((panel) => (
               <button
-                className={`rounded-lg px-4 py-2 text-left text-sm transition ${
+                className={`rounded-lg px-4 py-2 text-left text-sm transition cursor-pointer ${
                   activePanel === panel.id
-                    ? 'bg-rmc-ember text-rmc-abyss'
-                    : 'bg-white/[0.04] text-rmc-slate hover:bg-white/[0.08] hover:text-rmc-mist'
+                    ? 'bg-rmc-ember text-rmc-abyss font-bold shadow-[0_2px_8px_rgba(255,179,92,0.25)]'
+                    : 'bg-white/10 text-rmc-slate hover:bg-white/20 hover:text-rmc-mist'
                 }`}
                 key={panel.id}
                 type="button"

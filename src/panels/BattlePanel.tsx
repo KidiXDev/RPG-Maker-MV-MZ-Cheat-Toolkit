@@ -88,7 +88,7 @@ function ResourceInput({
   onChange(value: number): void;
 }) {
   return (
-    <label className="flex items-center gap-2">
+    <label className="grid grid-flow-col auto-cols-max items-center gap-2">
       <input
         className="w-24 rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono"
         max={max}

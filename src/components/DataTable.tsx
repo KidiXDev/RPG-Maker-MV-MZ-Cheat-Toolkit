@@ -70,19 +70,19 @@ export function DataTable<T>({
       />
       <div className="max-h-[40vh] overflow-auto rounded-lg border border-white/10">
         <table className="w-full border-collapse text-left text-sm">
-          <thead className="sticky top-0 bg-rmc-panel text-xs tracking-[0.18em] text-rmc-aether uppercase">
+          <thead className="text-xs tracking-[0.18em] text-rmc-aether uppercase">
             <tr>
               {columns.map((column) => (
-                <th className="px-4 py-3 font-semibold" key={column.key}>
+                <th className="sticky top-0 bg-rmc-panel px-4 py-3 font-semibold z-10" key={column.key}>
                   {column.sortValue ? (
                     <button
-                      className="flex items-center gap-2 text-left uppercase"
+                      className="grid grid-flow-col auto-cols-max items-center gap-1.5 text-left uppercase hover:text-rmc-ember transition-colors duration-150 cursor-pointer"
                       type="button"
                       onClick={() => toggleSort(column)}
                     >
-                      {column.header}
-                      <span className="text-rmc-ember">
-                        {sort?.key === column.key ? sort.direction.toUpperCase() : 'SORT'}
+                      <span>{column.header}</span>
+                      <span className="text-rmc-ember font-normal">
+                        {sort?.key === column.key ? (sort.direction === 'asc' ? '▲' : '▼') : '↕'}
                       </span>
                     </button>
                   ) : (

@@ -16,7 +16,7 @@ export function NumberInput({ label, maxLabel, error, className = '', id, ...pro
           {label}
         </label>
       ) : null}
-      <div className="flex items-center gap-2">
+      <div className="grid grid-cols-[1fr_auto] items-center gap-2">
         <input
           id={inputId}
           type="number"

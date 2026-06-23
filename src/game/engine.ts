@@ -8,7 +8,10 @@ const TOUCH_METHODS = [
   '_onTouchStart',
   '_onTouchMove',
   '_onTouchEnd',
-  '_onPointerDown'
+  '_onPointerDown',
+  '_onPointerMove',
+  '_onPointerUp',
+  '_onWheel'
 ] as const;
 let touchPatched = false;
 
@@ -59,8 +62,28 @@ export function isNwjs() {
   return Boolean(gameWindow().Utils?.isNwjs?.());
 }
 
-function isOverlayEvent(event: Event) {
-  const path = event.composedPath?.() ?? [];
+export function isOverlayEvent(event: Event) {
+  const host = document.getElementById(HOST_ID);
+  if (!host) {
+    return false;
+  }
 
-  return path.some((target) => target instanceof HTMLElement && target.id === HOST_ID);
+  if (typeof event.composedPath === 'function') {
+    return event.composedPath().includes(host);
+  }
+
+  // Fallback for older browsers
+  let target = event.target as Node | null;
+  while (target) {
+    if (target === host) {
+      return true;
+    }
+    if (target instanceof ShadowRoot) {
+      target = target.host;
+    } else {
+      target = target.parentNode;
+    }
+  }
+
+  return false;
 }

@@ -28,9 +28,9 @@ export function SwitchesPanel() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
-        <label className="flex cursor-pointer items-center gap-2 rounded-lg bg-white/[0.06] px-4 py-3 text-sm">
+        <label className="grid grid-flow-col auto-cols-max cursor-pointer items-center gap-2 rounded-lg bg-white/10 px-4 py-3 text-sm">
           <input className="h-5 w-5 accent-rmc-ember" checked={hideNameless} type="checkbox" onChange={(event) => setHideNameless(event.target.checked)} />
-          Hide nameless
+          <span>Hide nameless</span>
         </label>
         <Button variant="ghost" onClick={refresh}>Reload</Button>
         <Button
@@ -48,11 +48,11 @@ export function SwitchesPanel() {
       </div>
       <div className="max-h-[48vh] overflow-auto rounded-lg border border-white/10">
         <table className="w-full border-collapse text-left text-sm">
-          <thead className="sticky top-0 bg-rmc-panel text-xs tracking-[0.18em] text-rmc-aether uppercase">
+          <thead className="text-xs tracking-[0.18em] text-rmc-aether uppercase">
             <tr>
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Value</th>
+              <th className="sticky top-0 bg-rmc-panel px-4 py-3 z-10">ID</th>
+              <th className="sticky top-0 bg-rmc-panel px-4 py-3 z-10">Name</th>
+              <th className="sticky top-0 bg-rmc-panel px-4 py-3 z-10">Value</th>
             </tr>
           </thead>
           <tbody>

@@ -25,7 +25,7 @@ export function StatsPanel() {
   return (
     <section>
       <PanelHeader title="Stats / Level" description="Per-actor level and parameter inspection with lightweight editing." />
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2 [&>*]:mr-2 [&>*]:mb-2">
         <Button variant="ghost" onClick={refresh}>Reload</Button>
         <Button variant="ghost" onClick={() => {
           const reloaded = reloadPartyFromData();
@@ -44,9 +44,9 @@ export function StatsPanel() {
           title={selectedActor.name()}
           actions={
             <>
-              <label className="flex items-center gap-2 rounded-lg bg-rmc-abyss px-3 py-2 text-sm">
+              <label className="grid grid-flow-col auto-cols-max items-center gap-2 rounded-lg bg-rmc-abyss px-3 py-2 text-sm cursor-pointer">
                 <input className="h-5 w-5 accent-rmc-ember" checked={isGodModeEnabled(selectedActor.actorId())} type="checkbox" onChange={(event) => { toggleGodMode(selectedActor.actorId(), event.target.checked); refresh(); }} />
-                God mode
+                <span>God mode</span>
               </label>
               <Button variant="secondary" onClick={() => {
                 const reloaded = reloadActorFromData(selectedActor.actorId());
@@ -83,10 +83,44 @@ export function StatsPanel() {
 }
 
 function StatInput({ label, value, onChange }: { label: string; value: number; onChange(value: number): void }) {
+  const [localValue, setLocalValue] = useState(String(value));
+  const [prevValue, setPrevValue] = useState(value);
+
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setLocalValue(String(value));
+  }
+
+  function commit() {
+    const numeric = Number(localValue);
+    if (isNaN(numeric)) {
+      setLocalValue(String(value));
+      return;
+    }
+    if (numeric !== value) {
+      onChange(numeric);
+    }
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      commit();
+      event.currentTarget.blur();
+    }
+  }
+
   return (
     <label className="grid gap-2 text-sm text-rmc-slate">
       {label}
-      <input className="rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist" min={0} type="number" value={value} onChange={(event) => onChange(Number(event.target.value))} />
+      <input
+        className="rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist outline-none transition focus:border-rmc-aether"
+        min={0}
+        type="number"
+        value={localValue}
+        onChange={(event) => setLocalValue(event.target.value)}
+        onBlur={commit}
+        onKeyDown={handleKeyDown}
+      />
     </label>
   );
 }
