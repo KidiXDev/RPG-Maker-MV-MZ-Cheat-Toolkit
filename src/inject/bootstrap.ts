@@ -1,8 +1,6 @@
 import { isGameReady, patchTouchInputPassThrough } from '../game/engine.ts';
-import { getMoveSpeed, setMoveSpeed, setNoClip } from '../game/cheats/general.ts';
-import { setGameSpeedAll, setGameSpeedBattle } from '../game/cheats/gameSpeed.ts';
+import { getMoveSpeed } from '../game/cheats/general.ts';
 import { patchMessageSkip } from '../game/cheats/message.ts';
-import { setExpMultiplier, setDamageMultiplier } from '../game/cheats/multipliers.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
 
 const READY_TIMEOUT_MS = 30_000;
@@ -21,35 +19,17 @@ export async function waitForGameReady() {
 
   patchTouchInputPassThrough();
   patchMessageSkip();
-  applyPersistedRuntimeSettings();
+  applyRuntimeDefaults();
+  useCheatStore.getState().setGameReady(true);
 }
 
-function applyPersistedRuntimeSettings() {
-  const state = useCheatStore.getState();
-
-  setNoClip(state.noClip);
-
-  // Sync move speed: if the user previously set a non-default speed, reapply it
-  // with lock. Otherwise use the game's actual speed so we don't override the
-  // developer's intended default.
-  if (state.moveSpeed !== 4) {
-    setMoveSpeed(state.moveSpeed, true);
-  } else {
-    // Store the game's actual speed so the slider shows the correct value
-    const actualSpeed = getMoveSpeed();
-    if (actualSpeed !== 4) {
-      useCheatStore.getState().setMoveSpeed(actualSpeed);
-    }
-  }
-
-  // Restore both independent game speed values from persistence
-  setGameSpeedAll(state.gameSpeedAll);
-  setGameSpeedBattle(state.gameSpeedBattle);
-  // Apply persisted multiplier settings
-  if (state.expMultiplier !== 1) {
-    setExpMultiplier(state.expMultiplier);
-  }
-  if (state.damageMultiplier !== 1) {
-    setDamageMultiplier(state.damageMultiplier);
+function applyRuntimeDefaults() {
+  // Cheat values (game speed, move speed, no-clip, multipliers) are transient
+  // and start fresh each session — nothing to restore here. We only sync the
+  // store's move speed to the game's actual default so the slider displays the
+  // correct starting value.
+  const actualSpeed = getMoveSpeed();
+  if (actualSpeed !== useCheatStore.getState().moveSpeed) {
+    useCheatStore.getState().setMoveSpeed(actualSpeed);
   }
 }

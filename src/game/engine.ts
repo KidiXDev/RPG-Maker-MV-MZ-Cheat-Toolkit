@@ -62,6 +62,39 @@ export function isNwjs() {
   return Boolean(gameWindow().Utils?.isNwjs?.());
 }
 
+/** Minimum Chromium major version this toolkit's compatibility layer targets
+ *  (RPG Maker MV ships NW.js 0.29 / Chromium 65). Below this, modern JS/CSS
+ *  features the overlay relies on are likely missing. */
+const MIN_CHROMIUM_MAJOR = 65;
+
+/** Read NW.js / Chromium versions from the Node process global, if available. */
+export function getNwjsVersion(): { nw: string | null; chromium: string | null } {
+  try {
+    const proc = (window as unknown as Record<string, unknown>).process as
+      | { versions?: { nw?: string; chromium?: string } }
+      | undefined;
+
+    return {
+      nw: proc?.versions?.nw ?? null,
+      chromium: proc?.versions?.chromium ?? null,
+    };
+  } catch {
+    return { nw: null, chromium: null };
+  }
+}
+
+/** True when the runtime Chromium is older than the supported minimum. Returns
+ *  false when the version can't be determined (avoid false alarms). */
+export function isNwjsTooOld(): boolean {
+  const { chromium } = getNwjsVersion();
+  if (!chromium) return false;
+
+  const major = parseInt(chromium.split('.')[0], 10);
+  if (Number.isNaN(major)) return false;
+
+  return major < MIN_CHROMIUM_MAJOR;
+}
+
 export function isOverlayEvent(event: Event) {
   const host = document.getElementById(HOST_ID);
   if (!host) {
