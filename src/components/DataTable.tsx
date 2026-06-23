@@ -63,12 +63,12 @@ export function DataTable<T>({
   return (
     <div className="grid gap-3">
       <input
-        className="rounded-2xl border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
+        className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
         placeholder={searchPlaceholder}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
-      <div className="max-h-[42vh] overflow-auto rounded-2xl border border-white/10">
+      <div className="max-h-[40vh] overflow-auto rounded-lg border border-white/10">
         <table className="w-full border-collapse text-left text-sm">
           <thead className="sticky top-0 bg-rmc-panel text-xs tracking-[0.18em] text-rmc-aether uppercase">
             <tr>

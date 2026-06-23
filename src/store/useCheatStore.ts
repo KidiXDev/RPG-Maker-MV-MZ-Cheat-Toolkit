@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { z } from 'zod';
 import type { GameSpeedScope } from '../game/cheats/gameSpeed.ts';
 import { createCheatStorage } from '../game/storage.ts';
+import { generateId } from '../utils/id.ts';
 
 export type PanelId =
   | 'general'
@@ -95,7 +96,7 @@ export const useCheatStore = create<CheatState>()(
         }),
       pushToast: (message, tone = 'info') =>
         set((state) => ({
-          toasts: [...state.toasts.slice(-3), { id: crypto.randomUUID(), message, tone }]
+          toasts: [...state.toasts.slice(-3), { id: generateId(), message, tone }]
         })),
       dismissToast: (id) =>
         set((state) => ({

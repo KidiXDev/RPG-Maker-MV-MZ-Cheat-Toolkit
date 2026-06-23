@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useCheatStore, type PanelId } from '../store/useCheatStore.ts';
 import { BattlePanel } from '../panels/BattlePanel.tsx';
 import { GeneralPanel } from '../panels/GeneralPanel.tsx';
@@ -29,10 +30,25 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
   const activePanel = useCheatStore((state) => state.activePanel);
   const setActivePanel = useCheatStore((state) => state.setActivePanel);
   const setOpen = useCheatStore((state) => state.setOpen);
+  const backdropRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    backdropRef.current?.focus();
+  }, []);
+
+  function stopPropagation(e: React.SyntheticEvent) {
+    e.stopPropagation();
+  }
 
   return (
-    <div className="fixed inset-0 z-[9999] grid place-items-center bg-rmc-abyss/70 p-3 text-rmc-mist backdrop-blur-md">
-      <section className="grid h-[min(820px,94vh)] w-[min(1180px,96vw)] grid-cols-1 overflow-hidden rounded-[2rem] border border-rmc-copper/30 bg-[linear-gradient(135deg,rgba(24,34,49,0.98),rgba(8,11,16,0.98)),radial-gradient(circle_at_20%_0%,rgba(255,179,92,0.24),transparent_24rem)] shadow-rmc-panel md:grid-cols-[17rem_1fr]">
+    <div
+      ref={backdropRef}
+      tabIndex={-1}
+      className="pointer-events-auto fixed inset-0 z-[9999] grid place-items-center bg-rmc-abyss/70 p-3 text-rmc-mist backdrop-blur-md"
+      onClick={stopPropagation}
+      onKeyDown={stopPropagation}
+    >
+      <section className="grid h-[min(820px,94vh)] w-[min(1180px,96vw)] animate-[rmc-fade-in_200ms_ease-out] grid-cols-1 overflow-hidden rounded-2xl border border-rmc-copper/30 bg-[linear-gradient(135deg,rgba(24,34,49,0.98),rgba(8,11,16,0.98)),radial-gradient(circle_at_20%_0%,rgba(255,179,92,0.24),transparent_24rem)] shadow-rmc-panel md:grid-cols-[17rem_1fr]">
         <aside className="border-b border-white/10 bg-black/20 p-4 md:border-r md:border-b-0">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -49,10 +65,10 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
               Esc
             </button>
           </div>
-          <nav className="mt-6 grid max-h-52 grid-cols-2 gap-2 overflow-auto md:max-h-none md:grid-cols-1">
+          <nav className="mt-6 grid max-h-[40vh] grid-cols-2 gap-1 overflow-y-auto md:max-h-none md:grid-cols-1 md:gap-1">
             {panels.map((panel) => (
               <button
-                className={`rounded-2xl px-4 py-3 text-left text-sm transition ${
+                className={`rounded-lg px-4 py-2 text-left text-sm transition ${
                   activePanel === panel.id
                     ? 'bg-rmc-ember text-rmc-abyss'
                     : 'bg-white/[0.04] text-rmc-slate hover:bg-white/[0.08] hover:text-rmc-mist'

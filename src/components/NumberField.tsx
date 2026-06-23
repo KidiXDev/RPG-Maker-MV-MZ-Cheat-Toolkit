@@ -11,7 +11,7 @@ export function NumberField({ label, value, min, max, onChange }: NumberFieldPro
     <label className="grid gap-2 text-sm text-rmc-slate">
       {label}
       <input
-        className="rounded-xl border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist outline-none transition focus:border-rmc-aether"
+        className="rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist outline-none transition focus:border-rmc-aether"
         type="number"
         value={value}
         min={min}

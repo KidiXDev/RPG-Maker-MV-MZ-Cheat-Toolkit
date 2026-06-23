@@ -1,4 +1,5 @@
 import { useReducer, useState } from 'react';
+import { Button } from '../components/ui/index.ts';
 import { DataTable } from '../components/DataTable.tsx';
 import { inventoryEntries, setItemQuantity, type InventoryKind } from '../game/cheats/inventory.ts';
 import { PanelHeader } from './PanelHeader.tsx';
@@ -14,41 +15,18 @@ export function InventoryPanel() {
     <section>
       <PanelHeader title="Inventory" description="Search items, weapons, and armor, then set owned quantities." />
       <div className="mb-4 flex gap-2">
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-2" type="button" onClick={refresh}>
-          Reload
-        </button>
+        <Button variant="ghost" onClick={refresh}>Reload</Button>
         {kinds.map((candidate) => (
-          <button className={`rounded-2xl px-4 py-2 ${kind === candidate ? 'bg-rmc-ember text-rmc-abyss' : 'bg-white/[0.06]'}`} key={candidate} type="button" onClick={() => setKind(candidate)}>
-            {candidate}
-          </button>
+          <Button variant={kind === candidate ? 'primary' : 'ghost'} key={candidate} onClick={() => setKind(candidate)}>{candidate}</Button>
         ))}
       </div>
       <DataTable
         columns={[
           { key: 'name', header: 'Name', render: (item) => item.name, sortValue: (item) => item.name },
-          {
-            key: 'description',
-            header: 'Description',
-            render: (item) => item.description ?? '',
-            sortValue: (item) => item.description ?? ''
-          },
-          {
-            key: 'quantity',
-            header: 'Qty',
-            sortValue: (item) => item.quantity,
-            render: (item) => (
-              <input
-                className="w-24 rounded-xl border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono"
-                type="number"
-                value={item.quantity}
-                min={0}
-                onChange={(event) => {
-                  setItemQuantity(item, Number(event.target.value));
-                  refresh();
-                }}
-              />
-            )
-          }
+          { key: 'description', header: 'Description', render: (item) => item.description ?? '', sortValue: (item) => item.description ?? '' },
+          { key: 'quantity', header: 'Qty', sortValue: (item) => item.quantity, render: (item) => (
+            <input className="w-24 rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono" type="number" value={item.quantity} min={0} onChange={(event) => { setItemQuantity(item, Number(event.target.value)); refresh(); }} />
+          )}
         ]}
         rows={rows}
         filter={(item, query) => item.name.toLowerCase().includes(query)}

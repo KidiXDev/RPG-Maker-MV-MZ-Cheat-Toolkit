@@ -1,4 +1,5 @@
 import { useReducer } from 'react';
+import { Button } from '../components/ui/index.ts';
 import { DataTable } from '../components/DataTable.tsx';
 import {
   areRandomEncountersEnabled,
@@ -26,45 +27,20 @@ export function BattlePanel() {
     <section>
       <PanelHeader title="Battle / HP-MP" description="Battle result controls and party HP/MP snapshots." />
       <div className="mb-5 grid grid-cols-2 gap-2 md:grid-cols-4">
-        <button
-          className={`rounded-2xl px-4 py-3 font-semibold ${encountersEnabled ? 'bg-rmc-aether text-rmc-abyss' : 'bg-rmc-danger/20 text-rmc-danger'}`}
-          type="button"
-          onClick={() => {
-            setRandomEncountersEnabled(!encountersEnabled);
-            refresh();
-          }}
-        >
+        <Button variant={encountersEnabled ? 'secondary' : 'danger'} onClick={() => { setRandomEncountersEnabled(!encountersEnabled); refresh(); }}>
           Encounters {encountersEnabled ? 'on' : 'off'}
-        </button>
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={forceEncounter}>
-          Force encounter
-        </button>
+        </Button>
+        <Button variant="ghost" onClick={forceEncounter}>Force encounter</Button>
         {(['victory', 'defeat', 'escape', 'abort'] as const).map((result) => (
-          <button className="rounded-2xl bg-rmc-ember px-4 py-3 font-semibold text-rmc-abyss" key={result} type="button" onClick={() => forceBattleResult(result)}>
-            {result}
-          </button>
+          <Button variant="primary" key={result} onClick={() => forceBattleResult(result)}>{result}</Button>
         ))}
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={() => { recoverParty(); refresh(); }}>
-          Recover party
-        </button>
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={() => { woundParty(); refresh(); }}>
-          Wound party
-        </button>
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={() => { fillPartyTp(); refresh(); }}>
-          Fill TP
-        </button>
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={() => { setPartyHp(0); refresh(); }}>
-          Party HP 0
-        </button>
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={() => { setPartyHp(1); refresh(); }}>
-          Party HP 1
-        </button>
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={() => { setEnemiesHp(0); refresh(); }}>
-          Enemies HP 0
-        </button>
-        <button className="rounded-2xl bg-white/[0.06] px-4 py-3" type="button" onClick={() => { setEnemiesHp(1); refresh(); }}>
-          Enemies HP 1
-        </button>
+        <Button variant="ghost" onClick={() => { recoverParty(); refresh(); }}>Recover party</Button>
+        <Button variant="ghost" onClick={() => { woundParty(); refresh(); }}>Wound party</Button>
+        <Button variant="ghost" onClick={() => { fillPartyTp(); refresh(); }}>Fill TP</Button>
+        <Button variant="ghost" onClick={() => { setPartyHp(0); refresh(); }}>Party HP 0</Button>
+        <Button variant="ghost" onClick={() => { setPartyHp(1); refresh(); }}>Party HP 1</Button>
+        <Button variant="ghost" onClick={() => { setEnemiesHp(0); refresh(); }}>Enemies HP 0</Button>
+        <Button variant="ghost" onClick={() => { setEnemiesHp(1); refresh(); }}>Enemies HP 1</Button>
       </div>
       <DataTable
         columns={[
@@ -114,7 +90,7 @@ function ResourceInput({
   return (
     <label className="flex items-center gap-2">
       <input
-        className="w-24 rounded-xl border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono"
+        className="w-24 rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono"
         max={max}
         min={0}
         type="number"

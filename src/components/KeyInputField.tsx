@@ -8,7 +8,7 @@ type KeyInputFieldProps = {
 export function KeyInputField({ value, onChange }: KeyInputFieldProps) {
   return (
     <input
-      className="rounded-xl border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist"
+      className="rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist"
       readOnly
       value={value}
       onKeyDown={(event) => {

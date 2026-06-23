@@ -1,4 +1,5 @@
 import { useDeferredValue, useState } from 'react';
+import { Badge, Button } from '../components/ui/index.ts';
 import { KeyInputField } from '../components/KeyInputField.tsx';
 import { DEFAULT_SHORTCUTS } from '../shortcuts/defaults.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
@@ -28,44 +29,26 @@ export function ShortcutsPanel() {
       <PanelHeader title="Shortcuts" description="Customize key combos. Required shortcuts stay present when defaults are restored." />
       <div className="mb-4 grid gap-2 md:grid-cols-[1fr_auto_auto]">
         <input
-          className="rounded-2xl border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
+          className="rounded-lg border border-white/10 bg-rmc-abyss/80 px-4 py-3 text-sm text-rmc-mist outline-none transition placeholder:text-rmc-slate focus:border-rmc-aether"
           placeholder="Search shortcuts"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
-        <label className="flex items-center gap-2 rounded-2xl bg-white/[0.06] px-4 py-3">
-          <input
-            className="h-5 w-5 accent-rmc-ember"
-            checked={hideDescriptions}
-            type="checkbox"
-            onChange={(event) => setHideDescriptions(event.target.checked)}
-          />
+        <label className="flex cursor-pointer items-center gap-2 rounded-lg bg-white/[0.06] px-4 py-3 text-sm">
+          <input className="h-5 w-5 accent-rmc-ember" checked={hideDescriptions} type="checkbox" onChange={(event) => setHideDescriptions(event.target.checked)} />
           Hide descriptions
         </label>
-        <button
-          className="rounded-2xl bg-rmc-aether px-4 py-3 font-semibold text-rmc-abyss"
-          type="button"
-          onClick={() =>
-            requestConfirm({
-              title: 'Restore default shortcuts?',
-              message: 'Custom key bindings and shortcut parameters will be replaced.',
-              confirmLabel: 'Restore defaults',
-              onConfirm: restoreDefaults
-            })
-          }
-        >
+        <Button variant="secondary" onClick={() => requestConfirm({ title: 'Restore default shortcuts?', message: 'Custom key bindings and shortcut parameters will be replaced.', confirmLabel: 'Restore defaults', onConfirm: restoreDefaults })}>
           Restore {DEFAULT_SHORTCUTS.length} defaults
-        </button>
+        </Button>
       </div>
-      <div className="grid gap-3">
+      <div className="max-h-[55vh] overflow-y-auto grid gap-3 pr-1">
         {visibleShortcuts.map((shortcut) => (
-          <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:grid-cols-[1fr_14rem]" key={shortcut.id}>
+          <div className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-4 md:grid-cols-[1fr_14rem]" key={shortcut.id}>
             <span>
               <strong>{shortcut.label}</strong>
-              {!hideDescriptions ? (
-                <span className="mt-1 block text-sm text-rmc-slate">{shortcut.description}</span>
-              ) : null}
-              {shortcut.required ? <span className="mt-2 inline-block rounded-full bg-rmc-ember/20 px-2 py-1 text-xs text-rmc-ember">Required</span> : null}
+              {!hideDescriptions ? <span className="mt-1 block text-sm text-rmc-slate">{shortcut.description}</span> : null}
+              {shortcut.required ? <Badge variant="warning" className="mt-2">Required</Badge> : null}
             </span>
             <div className="grid gap-2">
               <KeyInputField value={shortcut.combo} onChange={(value) => setShortcut(shortcut.id, value)} />
@@ -86,25 +69,11 @@ export function ShortcutsPanel() {
   );
 }
 
-function ParamInput({
-  label,
-  value,
-  onChange
-}: {
-  label: string;
-  value: number;
-  onChange(value: number): void;
-}) {
+function ParamInput({ label, value, onChange }: { label: string; value: number; onChange(value: number): void }) {
   return (
     <label className="grid gap-1 text-xs text-rmc-slate">
       {label}
-      <input
-        className="rounded-xl border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist"
-        min={1}
-        type="number"
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-      />
+      <input className="rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono text-rmc-mist" min={1} type="number" value={value} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
   );
 }

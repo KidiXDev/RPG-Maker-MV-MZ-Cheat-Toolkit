@@ -6,7 +6,7 @@ type ToggleProps = {
 
 export function Toggle({ checked, label, onChange }: ToggleProps) {
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-rmc-mist">
+    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-rmc-mist">
       <span>{label}</span>
       <input
         className="h-5 w-5 accent-rmc-ember"

@@ -1,6 +1,7 @@
 import { currentMapName } from './general.ts';
 import { teleportTo } from './teleport.ts';
 import { gameWindow } from '../types.ts';
+import { generateId } from '../../utils/id.ts';
 
 export type SavedLocation = {
   id: string;
@@ -21,7 +22,7 @@ export function captureCurrentLocation(alias: string): SavedLocation | null {
   }
 
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     alias,
     mapId,
     mapName: currentMapName(),
