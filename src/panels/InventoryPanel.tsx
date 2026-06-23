@@ -22,11 +22,11 @@ export function InventoryPanel() {
       </div>
       <DataTable
         columns={[
-          { key: 'name', header: 'Name', render: (item) => item.name, sortValue: (item) => item.name },
+          { key: 'name', header: 'Name', render: (item) => <span className="block max-w-[180px] truncate">{item.name}</span>, sortValue: (item) => item.name, className: 'w-0' },
           { key: 'description', header: 'Description', render: (item) => item.description ?? '', sortValue: (item) => item.description ?? '' },
           { key: 'quantity', header: 'Qty', sortValue: (item) => item.quantity, render: (item) => (
-            <input className="w-24 rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono" type="number" value={item.quantity} min={0} onChange={(event) => { setItemQuantity(item, Number(event.target.value)); refresh(); }} />
-          )}
+            <input className="w-20 rounded-lg border border-white/10 bg-rmc-abyss px-3 py-2 font-rmc-mono" type="number" value={item.quantity} min={0} onChange={(event) => { setItemQuantity(item._item, Number(event.target.value)); refresh(); }} />
+          ), className: 'w-0' }
         ]}
         rows={rows}
         filter={(item, query) => item.name.toLowerCase().includes(query)}

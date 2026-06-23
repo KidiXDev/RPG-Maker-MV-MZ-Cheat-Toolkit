@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 type NumberFieldProps = {
   label: string;
@@ -11,6 +11,7 @@ type NumberFieldProps = {
 export function NumberField({ label, value, min, max, onChange }: NumberFieldProps) {
   const [localValue, setLocalValue] = useState(String(value));
   const [prevValue, setPrevValue] = useState(value);
+  const committedRef = useRef<number | null>(null);
 
   if (value !== prevValue) {
     setPrevValue(value);
@@ -30,8 +31,8 @@ export function NumberField({ label, value, min, max, onChange }: NumberFieldPro
       numeric = max;
     }
     setLocalValue(String(numeric));
-    // Only fire onChange if value has actually changed to prevent duplicate toasts
-    if (numeric !== value) {
+    if (numeric !== value && numeric !== committedRef.current) {
+      committedRef.current = numeric;
       onChange(numeric);
     }
   }
@@ -39,7 +40,6 @@ export function NumberField({ label, value, min, max, onChange }: NumberFieldPro
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Enter') {
       commit();
-      event.currentTarget.blur();
     }
   }
 

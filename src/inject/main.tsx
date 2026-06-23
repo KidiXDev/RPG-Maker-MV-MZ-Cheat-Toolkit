@@ -76,7 +76,6 @@ function mount() {
   host.style.bottom = '0';
   host.style.left = '0';
   host.style.zIndex = '2147483647';
-  host.style.pointerEvents = 'none';
   document.body.appendChild(host);
 
   // Block all overlay events from bubbling out of the host to the main document (game)

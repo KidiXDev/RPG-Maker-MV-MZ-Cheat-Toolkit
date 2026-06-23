@@ -137,7 +137,8 @@ function printDiff(before, after, filePath) {
 
 function copyBundle(cheatDir, options = {}) {
   const distDir = path.resolve('dist');
-  const requiredFiles = ['cheat.js', 'cheat.css'];
+  const requiredFiles = ['cheat.js'];
+  const optionalFiles = ['cheat.css'];
 
   for (const file of requiredFiles) {
     const source = path.join(distDir, file);
@@ -151,6 +152,17 @@ function copyBundle(cheatDir, options = {}) {
 
   for (const file of requiredFiles) {
     fs.copyFileSync(path.join(distDir, file), path.join(cheatDir, file));
+  }
+
+  for (const file of optionalFiles) {
+    const source = path.join(distDir, file);
+    const target = path.join(cheatDir, file);
+
+    if (fs.existsSync(source)) {
+      fs.copyFileSync(source, target);
+    } else if (fs.existsSync(target)) {
+      fs.unlinkSync(target);
+    }
   }
 
   const diagnosticLoader = path.join(cheatDir, 'rmc-diagnostic.js');

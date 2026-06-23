@@ -5,6 +5,7 @@ type Column<T> = {
   header: string;
   render(row: T): ReactNode;
   sortValue?: (row: T) => number | string;
+  className?: string;
 };
 
 type DataTableProps<T> = {
@@ -73,7 +74,7 @@ export function DataTable<T>({
           <thead className="text-xs tracking-[0.18em] text-rmc-aether uppercase">
             <tr>
               {columns.map((column) => (
-                <th className="sticky top-0 bg-rmc-panel px-4 py-3 font-semibold z-10" key={column.key}>
+                <th className={`sticky top-0 bg-rmc-panel px-4 py-3 font-semibold z-10 ${column.className ?? ''}`} key={column.key}>
                   {column.sortValue ? (
                     <button
                       className="grid grid-flow-col auto-cols-max items-center gap-1.5 text-left uppercase hover:text-rmc-ember transition-colors duration-150 cursor-pointer"
@@ -96,7 +97,7 @@ export function DataTable<T>({
             {visibleRows.map((row) => (
               <tr className="border-t border-white/10 odd:bg-white/[0.03]" key={getRowId(row)}>
                 {columns.map((column) => (
-                  <td className="px-4 py-3 align-middle text-rmc-mist" key={column.key}>
+                  <td className={`px-4 py-3 align-middle text-rmc-mist ${column.className ?? ''}`} key={column.key}>
                     {column.render(row)}
                   </td>
                 ))}

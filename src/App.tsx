@@ -16,6 +16,11 @@ function App({ portalRoot }: AppProps) {
   useShortcutManager();
 
   useEffect(() => {
+    const host = document.getElementById('rmc-cheat-host');
+    if (host) {
+      host.style.pointerEvents = isOpen ? 'auto' : 'none';
+    }
+
     if (!isOpen) {
       return;
     }

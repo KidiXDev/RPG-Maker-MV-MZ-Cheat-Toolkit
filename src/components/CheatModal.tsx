@@ -40,35 +40,39 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
     e.stopPropagation();
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Escape') {
+      setOpen(false);
+    }
+    e.stopPropagation();
+  }
+
   return (
     <div
       ref={backdropRef}
       tabIndex={-1}
       className="pointer-events-auto fixed inset-0 z-[9999] grid place-items-center bg-rmc-abyss/70 p-3 text-rmc-mist backdrop-blur-md"
       onClick={stopPropagation}
-      onKeyDown={stopPropagation}
+      onKeyDown={handleKeyDown}
     >
-      <section className="grid w-[96vw] h-[92vh] md:w-[940px] md:h-[620px] animate-[rmc-fade-in_200ms_ease-out] grid-cols-1 overflow-hidden rounded-2xl border border-rmc-copper/30 bg-[linear-gradient(135deg,rgba(24,34,49,0.98),rgba(8,11,16,0.98)),radial-gradient(circle_at_20%_0%,rgba(255,179,92,0.24),transparent_24rem)] shadow-rmc-panel md:grid-cols-[17rem_minmax(0,1fr)]">
-        <aside className="border-b border-white/10 bg-black/20 p-4 md:border-r md:border-b-0">
-          <div className="grid grid-cols-[1fr_auto] items-start gap-4">
+      <section className="grid w-[96vw] h-[92vh] md:w-[960px] md:h-[640px] animate-[rmc-fade-in_200ms_ease-out] grid-cols-1 overflow-hidden rounded-2xl border border-rmc-copper/30 bg-[linear-gradient(135deg,rgba(24,34,49,0.98),rgba(8,11,16,0.98)),radial-gradient(circle_at_20%_0%,rgba(255,179,92,0.24),transparent_24rem)] shadow-rmc-panel md:grid-cols-[11rem_minmax(0,1fr)]">
+        <aside className="border-b border-white/10 bg-black/20 p-3 md:border-r md:border-b-0 md:p-3">
+          <div className="grid grid-cols-[1fr_auto] items-start gap-2">
             <div>
-              <p className="font-rmc-mono text-[0.65rem] tracking-[0.35em] text-rmc-copper uppercase">
-                Runtime overlay
-              </p>
-              <h2 className="mt-2 font-rmc-display text-2xl font-black">RMC Toolkit</h2>
+              <h2 className="font-rmc-display text-base font-black tracking-tight">RMC Toolkit</h2>
             </div>
             <button
-              className="rounded-full border border-white/10 px-3 py-1 text-rmc-slate hover:border-rmc-ember hover:text-rmc-ember cursor-pointer"
+              className="rounded-full border border-white/10 px-2 py-0.5 text-[0.6rem] text-rmc-slate hover:border-rmc-ember hover:text-rmc-ember cursor-pointer"
               type="button"
               onClick={() => setOpen(false)}
             >
               Esc
             </button>
           </div>
-          <nav className="mt-6 grid max-h-[40vh] grid-cols-2 gap-1 overflow-y-auto md:max-h-none md:grid-cols-1 md:gap-1">
+          <nav className="mt-3 grid max-h-[40vh] grid-cols-2 gap-0.5 overflow-y-auto md:max-h-none md:grid-cols-1 md:gap-0.5">
             {panels.map((panel) => (
               <button
-                className={`rounded-lg px-4 py-2 text-left text-sm transition cursor-pointer ${
+                className={`rounded-lg px-3 py-1.5 text-left text-xs transition cursor-pointer ${
                   activePanel === panel.id
                     ? 'bg-rmc-ember text-rmc-abyss font-bold shadow-[0_2px_8px_rgba(255,179,92,0.25)]'
                     : 'bg-white/10 text-rmc-slate hover:bg-white/20 hover:text-rmc-mist'
@@ -82,7 +86,7 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
             ))}
           </nav>
         </aside>
-        <main className="overflow-auto p-5 md:p-8">
+        <main className="overflow-auto p-6 md:p-10">
           <PanelSwitch activePanel={activePanel} portalRoot={portalRoot} />
         </main>
       </section>
