@@ -1,4 +1,4 @@
-import { gameWindow, type EngineKind } from './types.ts';
+import { gameWindow, type EngineKind, type SceneConstructor } from './types.ts';
 
 const HOST_ID = 'rmc-cheat-host';
 const TOUCH_METHODS = [
@@ -86,4 +86,33 @@ export function isOverlayEvent(event: Event) {
   }
 
   return false;
+}
+
+let introDismissed = false;
+let delayedRunCall: (() => void) | null = null;
+
+export function delaySceneManagerRun() {
+  const runtime = gameWindow();
+  if (!runtime.SceneManager || !runtime.SceneManager.run) {
+    return;
+  }
+
+  const originalRun = runtime.SceneManager.run;
+  runtime.SceneManager.run = function(this: unknown, sceneClass: SceneConstructor) {
+    if (introDismissed) {
+      originalRun.call(this, sceneClass);
+    } else {
+      delayedRunCall = () => {
+        originalRun.call(this, sceneClass);
+      };
+    }
+  };
+}
+
+export function startDelayedGame() {
+  introDismissed = true;
+  if (delayedRunCall) {
+    delayedRunCall();
+    delayedRunCall = null;
+  }
 }

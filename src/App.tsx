@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { CheatModal } from './components/CheatModal.tsx';
 import { ConfirmDialog } from './components/ConfirmDialog.tsx';
+import { IntroOverlay } from './components/IntroOverlay.tsx';
 import { ToastViewport } from './components/Toast.tsx';
 import { useShortcutManager } from './shortcuts/manager.ts';
 import { useCheatStore } from './store/useCheatStore.ts';
@@ -11,6 +12,7 @@ type AppProps = {
 
 function App({ portalRoot }: AppProps) {
   const isOpen = useCheatStore((state) => state.isOpen);
+  const isIntroVisible = useCheatStore((state) => state.isIntroVisible);
   const toggleOpen = useCheatStore((state) => state.toggleOpen);
 
   useShortcutManager();
@@ -18,7 +20,8 @@ function App({ portalRoot }: AppProps) {
   useEffect(() => {
     const host = document.getElementById('rmc-cheat-host');
     if (host) {
-      host.style.pointerEvents = isOpen ? 'auto' : 'none';
+      const val = isOpen || isIntroVisible ? 'auto' : 'none';
+      host.style.setProperty('pointer-events', val, 'important');
     }
 
     if (!isOpen) {
@@ -31,18 +34,19 @@ function App({ portalRoot }: AppProps) {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [isOpen]);
+  }, [isOpen, isIntroVisible]);
 
   return (
     <div className="pointer-events-none">
       <button
-        className="pointer-events-auto fixed right-5 bottom-5 z-9998 rounded-full border border-rmc-copper/60 bg-rmc-ink/90 px-4 py-3 text-sm font-semibold tracking-[0.2em] text-rmc-ember shadow-rmc-panel backdrop-blur transition hover:border-rmc-ember focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rmc-ember"
+        className="pointer-events-auto fixed right-5 bottom-5 z-9998 rounded-full border border-rmc-copper/60 bg-rmc-ink/90 px-4 py-3 text-sm font-semibold tracking-[0.2em] text-rmc-ember shadow-rmc-panel backdrop-blur transition hover:border-rmc-ember focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-rmc-ember"
         type="button"
         onClick={toggleOpen}
       >
         RMC
       </button>
       {isOpen ? <CheatModal portalRoot={portalRoot} /> : null}
+      {isIntroVisible ? <IntroOverlay /> : null}
       <ConfirmDialog portalRoot={portalRoot} />
       <ToastViewport portalRoot={portalRoot} />
     </div>

@@ -42,6 +42,22 @@
     }
   }
 
+  var originalConsoleError = console.error;
+  console.error = function () {
+    write('console.error', Array.prototype.slice.call(arguments).map(String).join(' '));
+    if (originalConsoleError) {
+      originalConsoleError.apply(console, arguments);
+    }
+  };
+
+  var originalConsoleWarn = console.warn;
+  console.warn = function () {
+    write('console.warn', Array.prototype.slice.call(arguments).map(String).join(' '));
+    if (originalConsoleWarn) {
+      originalConsoleWarn.apply(console, arguments);
+    }
+  };
+
   window.__RMC_DIAGNOSTIC__ = {
     enabled: true,
     path: logPath,
@@ -81,7 +97,7 @@
   cheatScript.onerror = function () {
     write('cheat.js error event');
   };
-  document.body.appendChild(cheatScript);
+  document.head.appendChild(cheatScript);
 
   window.setTimeout(function () {
     var host = document.getElementById('rmc-cheat-host');

@@ -1,4 +1,4 @@
-import { useDeferredValue, useState, type ReactNode } from 'react';
+import { memo, useDeferredValue, useMemo, useState, type ReactNode } from 'react';
 
 type Column<T> = {
   key: string;
@@ -14,14 +14,17 @@ type DataTableProps<T> = {
   searchPlaceholder?: string;
   filter(row: T, query: string): boolean;
   getRowId(row: T): string | number;
+  /** Max visible rows before truncating. 0 = no limit. */
+  pageSize?: number;
 };
 
-export function DataTable<T>({
+function DataTableInner<T>({
   columns,
   rows,
   searchPlaceholder = 'Search',
   filter,
-  getRowId
+  getRowId,
+  pageSize = 500
 }: DataTableProps<T>) {
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<{
@@ -30,42 +33,47 @@ export function DataTable<T>({
   } | null>(null);
   const deferredQuery = useDeferredValue(query);
   const normalizedQuery = deferredQuery.trim().toLowerCase();
-  const filteredRows = normalizedQuery
-    ? rows.filter((row) => filter(row, normalizedQuery))
-    : rows;
+
+  const filteredRows = useMemo(
+    () => (normalizedQuery ? rows.filter((row) => filter(row, normalizedQuery)) : rows),
+    [rows, normalizedQuery, filter]
+  );
+
   const sortColumn = sort
     ? columns.find((column) => column.key === sort.key)
     : undefined;
-  const visibleRows =
-    sortColumn?.sortValue && sort
-      ? [...filteredRows].sort((left, right) => {
-          const leftValue = sortColumn.sortValue?.(left) ?? '';
-          const rightValue = sortColumn.sortValue?.(right) ?? '';
-          const result =
-            typeof leftValue === 'number' && typeof rightValue === 'number'
-              ? leftValue - rightValue
-              : String(leftValue).localeCompare(String(rightValue), undefined, {
-                  numeric: true
-                });
 
-          return sort.direction === 'asc' ? result : -result;
-        })
-      : filteredRows;
+  const sortedRows = useMemo(() => {
+    if (!sortColumn?.sortValue || !sort) {
+      return filteredRows;
+    }
+    return [...filteredRows].sort((left, right) => {
+      const leftValue = sortColumn.sortValue?.(left) ?? '';
+      const rightValue = sortColumn.sortValue?.(right) ?? '';
+      const result =
+        typeof leftValue === 'number' && typeof rightValue === 'number'
+          ? leftValue - rightValue
+          : String(leftValue).localeCompare(String(rightValue), undefined, {
+              numeric: true
+            });
+      return sort.direction === 'asc' ? result : -result;
+    });
+  }, [filteredRows, sortColumn, sort]);
+
+  const visibleRows = pageSize > 0 ? sortedRows.slice(0, pageSize) : sortedRows;
+  const truncated = pageSize > 0 && sortedRows.length > pageSize;
 
   function toggleSort(column: Column<T>) {
     if (!column.sortValue) {
       return;
     }
-
     setSort((current) => {
       if (current?.key !== column.key) {
         return { key: column.key, direction: 'asc' };
       }
-
       if (current.direction === 'asc') {
         return { key: column.key, direction: 'desc' };
       }
-
       return null;
     });
   }
@@ -125,9 +133,21 @@ export function DataTable<T>({
                 ))}
               </tr>
             ))}
+            {truncated ? (
+              <tr>
+                <td
+                  className="px-4 py-3 text-sm text-rmc-slate text-center"
+                  colSpan={columns.length}
+                >
+                  Showing {pageSize} of {sortedRows.length} — use search to narrow results
+                </td>
+              </tr>
+            ) : null}
           </tbody>
         </table>
       </div>
     </div>
   );
 }
+
+export const DataTable = memo(DataTableInner) as typeof DataTableInner;

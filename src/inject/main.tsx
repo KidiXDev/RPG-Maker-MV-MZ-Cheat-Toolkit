@@ -4,19 +4,23 @@ import App from '../App.tsx';
 import { waitForGameReady } from './bootstrap.ts';
 import { getDiagnostics } from './diagnostics.ts';
 import cssText from '../index.css?inline';
+import { delaySceneManagerRun } from '../game/engine.ts';
 
 const HOST_ID = 'rmc-cheat-host';
 const PORTAL_ID = 'rmc-cheat-portals';
 
 function replaceLogicalAndGapProperties(css: string): string {
   return css
+    .replace(/:root/g, ':host') // Map :root variables to :host for Shadow DOM!
+    // Replace Tailwind v4's modern features supports check with an always-true check
+    .replace(/@supports\s*[^{]*color:rgb\(from[^{]*{/g, '@supports (display: block) {')
     .replace(/padding-inline:([^;}]+)/g, 'padding-left:$1;padding-right:$1')
     .replace(/padding-block:([^;}]+)/g, 'padding-top:$1;padding-bottom:$1')
     .replace(/margin-inline:([^;}]+)/g, 'margin-left:$1;margin-right:$1')
     .replace(/margin-block:([^;}]+)/g, 'margin-top:$1;margin-bottom:$1')
     .replace(/border-inline-width:([^;}]+)/g, 'border-left-width:$1;border-right-width:$1')
     .replace(/border-block-width:([^;}]+)/g, 'border-top-width:$1;border-bottom-width:$1')
-    .replace(/(?<!grid-)(row-gap|column-gap|gap):([^;}]+)/g, 'grid-$1:$2;$1:$2')
+    .replace(/(^|[^a-zA-Z0-9-])(row-gap|column-gap|gap):([^;}]+)/g, '$1grid-$2:$3; $2:$3')
     .replace(/grid-grid-/g, 'grid-');
 }
 
@@ -61,6 +65,17 @@ function stripAtLayer(css: string): string {
 
 function mount() {
   const diagnostics = getDiagnostics();
+
+  if (!document.body) {
+    diagnostics.log('mount deferred: document.body not ready');
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', mount);
+    } else {
+      window.setTimeout(mount, 50);
+    }
+    return;
+  }
+
   const existing = document.getElementById(HOST_ID);
 
   if (existing) {
@@ -70,12 +85,12 @@ function mount() {
 
   const host = document.createElement('div');
   host.id = HOST_ID;
-  host.style.position = 'fixed';
-  host.style.top = '0';
-  host.style.right = '0';
-  host.style.bottom = '0';
-  host.style.left = '0';
-  host.style.zIndex = '2147483647';
+  host.style.setProperty('position', 'fixed', 'important');
+  host.style.setProperty('top', '0', 'important');
+  host.style.setProperty('right', '0', 'important');
+  host.style.setProperty('bottom', '0', 'important');
+  host.style.setProperty('left', '0', 'important');
+  host.style.setProperty('z-index', '2147483647', 'important');
   document.body.appendChild(host);
 
   // Block all overlay events from bubbling out of the host to the main document (game)
@@ -96,7 +111,7 @@ function mount() {
 
   /* preprocess and inject CSS inside shadow root for proper styling and scoping */
   const style = document.createElement('style');
-  style.textContent = replaceLogicalAndGapProperties(stripAtLayer(cssText));
+  style.textContent = ':host { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 2147483647 !important; display: block !important; pointer-events: none !important; }\n' + replaceLogicalAndGapProperties(stripAtLayer(cssText));
   rootContainer.appendChild(style);
 
   const rootElement = document.createElement('div');
@@ -113,16 +128,75 @@ function mount() {
   diagnostics.log('react root rendered');
   diagnostics.inspectHost('after render');
   window.setTimeout(() => diagnostics.inspectHost('after 1s'), 1000);
+
+  window.setTimeout(() => {
+    try {
+      const host = document.getElementById(HOST_ID);
+      const shadow = host?.shadowRoot;
+      const button = shadow?.querySelector('button');
+
+      const hostRect = host?.getBoundingClientRect();
+      const btnRect = button?.getBoundingClientRect();
+
+      const hostStyle = host ? window.getComputedStyle(host) : null;
+      const btnStyle = button ? window.getComputedStyle(button) : null;
+
+      const testDiv = document.createElement('div');
+      testDiv.style.position = 'fixed';
+      document.body.appendChild(testDiv);
+      const zTests: Record<string, string> = {};
+      for (const zVal of ['999', '9999', '99999', '999999', '2147483647']) {
+        testDiv.style.zIndex = zVal;
+        zTests[zVal] = window.getComputedStyle(testDiv).zIndex;
+      }
+      document.body.removeChild(testDiv);
+      diagnostics.log('z-index capability test', zTests);
+
+      diagnostics.log('layout diagnostic', {
+        host: {
+          exists: Boolean(host),
+          width: hostRect?.width,
+          height: hostRect?.height,
+          display: hostStyle?.display,
+          position: hostStyle?.position,
+          zIndex: hostStyle?.zIndex,
+          visibility: hostStyle?.visibility,
+          opacity: hostStyle?.opacity
+        },
+        button: {
+          exists: Boolean(button),
+          width: btnRect?.width,
+          height: btnRect?.height,
+          display: btnStyle?.display,
+          position: btnStyle?.position,
+          right: btnStyle?.right,
+          bottom: btnStyle?.bottom,
+          visibility: btnStyle?.visibility,
+          opacity: btnStyle?.opacity,
+          color: btnStyle?.color,
+          bg: btnStyle?.backgroundColor
+        },
+        shadowChildren: shadow ? Array.from(shadow.children).map(c => `${c.tagName}${c.id ? '#' + c.id : ''}`) : []
+      });
+    } catch (e) {
+      diagnostics.log('layout diagnostic error', e instanceof Error ? e.message : String(e));
+    }
+  }, 3000);
 }
+
+// Intercept and delay SceneManager.run immediately
+delaySceneManagerRun();
 
 const diagnostics = getDiagnostics();
 diagnostics.installGlobalHandlers();
 diagnostics.log('cheat bundle executing');
 
+// Mount React immediately on startup to show RMC Active boot intro
+mount();
+
 void waitForGameReady()
   .then(() => {
     diagnostics.log('game ready wait completed');
-    mount();
   })
   .catch((error: unknown) => {
     diagnostics.log('bootstrap failed', error instanceof Error ? error.stack : String(error));

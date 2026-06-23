@@ -116,6 +116,7 @@ export type GameGlobalWindow = Window &
       reloadGame?(): void;
       _deltaTime?: number;
       _reloaded?: boolean;
+      run?(sceneClass: SceneConstructor): void;
     };
     TouchInput?: Record<string, unknown>;
     Utils?: {

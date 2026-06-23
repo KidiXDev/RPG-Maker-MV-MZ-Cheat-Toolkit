@@ -32,7 +32,6 @@
   --font-rmc-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-rmc-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
   color: var(--color-rmc-mist);
-  background: radial-gradient(circle at top left, #20354a 0, #080b10 38rem);
   font-family: var(--font-rmc-body);
 }
 
@@ -40,6 +39,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  background: radial-gradient(circle at top left, #20354a 0, #080b10 38rem);
 }
 
 button,
@@ -82,3 +82,19 @@ select:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* Chrome 65 compatibility color-mix fallback overrides */
+.bg-white\/10 { background-color: rgba(255, 255, 255, 0.1) !important; }
+.border-white\/10 { border-color: rgba(255, 255, 255, 0.1) !important; }
+.bg-white\/3 { background-color: rgba(255, 255, 255, 0.03) !important; }
+.bg-white\/4 { background-color: rgba(255, 255, 255, 0.04) !important; }
+.odd\:bg-white\/3:nth-child(odd) { background-color: rgba(255, 255, 255, 0.03) !important; }
+.bg-black\/20 { background-color: rgba(0, 0, 0, 0.2) !important; }
+.bg-rmc-abyss\/80 { background-color: rgba(8, 11, 16, 0.8) !important; }
+.bg-rmc-abyss\/75 { background-color: rgba(8, 11, 16, 0.75) !important; }
+.bg-rmc-abyss\/70 { background-color: rgba(8, 11, 16, 0.7) !important; }
+.border-rmc-aether\/30 { border-color: rgba(117, 214, 255, 0.3) !important; }
+.bg-rmc-aether\/10 { background-color: rgba(117, 214, 255, 0.1) !important; }
+.bg-rmc-ink\/90 { background-color: rgba(16, 23, 34, 0.9) !important; }
+.border-rmc-copper\/60 { border-color: rgba(199, 131, 75, 0.6) !important; }
+.border-rmc-copper\/30 { border-color: rgba(199, 131, 75, 0.3) !important; }

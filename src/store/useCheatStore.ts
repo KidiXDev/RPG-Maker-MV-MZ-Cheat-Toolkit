@@ -45,10 +45,13 @@ type CheatState = z.infer<typeof persistedSchema> & {
     onConfirm(): void;
   } | null;
   isOpen: boolean;
+  isIntroVisible: boolean;
   toasts: Array<{ id: string; message: string; tone: 'info' | 'danger' }>;
   closeConfirm(): void;
   setOpen(open: boolean): void;
   toggleOpen(): void;
+  showIntro(): void;
+  hideIntro(): void;
   setActivePanel(panel: PanelId): void;
   setGameSpeed(speed: number): void;
   setGameSpeedScope(scope: GameSpeedScope): void;
@@ -73,12 +76,15 @@ export const useCheatStore = create<CheatState>()(
       gameSpeed: 1,
       gameSpeedScope: 'all',
       isOpen: false,
+      isIntroVisible: true,
       moveSpeed: 4,
       noClip: false,
       toasts: [],
       closeConfirm: () => set({ confirmDialog: null }),
       setOpen: (open) => set({ isOpen: open }),
       toggleOpen: () => set((state) => ({ isOpen: !state.isOpen })),
+      showIntro: () => set({ isIntroVisible: true }),
+      hideIntro: () => set({ isIntroVisible: false }),
       setActivePanel: (panel) => set({ activePanel: panel }),
       setGameSpeed: (speed) => set({ gameSpeed: speed }),
       setGameSpeedScope: (scope) => set({ gameSpeedScope: scope }),

@@ -13,7 +13,7 @@ function buildLoaderBlock({ diagnostic = false } = {}) {
 
   return `${MARKER_START}
 (function(){var s=document.createElement('script');s.src='${scriptSrc}';
-s.async=false;${diagnosticLine}document.body.appendChild(s);})();
+s.async=false;${diagnosticLine}document.head.appendChild(s);})();
 ${MARKER_END}`;
 }
 

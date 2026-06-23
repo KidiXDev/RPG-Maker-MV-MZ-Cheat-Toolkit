@@ -31,7 +31,10 @@ export function createCheatStorage(): StateStorage {
   try {
     const fs = runtime.require('fs') as FileSystemModule;
     const path = runtime.require('path') as PathModule;
-    const basePath = window.location.pathname.replace(/\/[^/]*$/, '');
+    let basePath = window.location.pathname.replace(/\/[^/]*$/, '');
+    if (basePath.startsWith('/') && basePath.charAt(2) === ':') {
+      basePath = basePath.slice(1);
+    }
     const baseDir = path.join(decodeURIComponent(basePath), 'cheat-settings');
 
     if (!fs.existsSync(baseDir)) {
