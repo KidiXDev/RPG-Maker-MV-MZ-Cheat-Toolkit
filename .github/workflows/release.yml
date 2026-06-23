@@ -33,7 +33,6 @@ jobs:
           mkdir -p release/scripts
           mkdir -p release/dist
           cp dist/cheat.js release/dist/
-          cp dist/cheat.css release/dist/
           cp scripts/install.bat release/scripts/
           cp scripts/install.mjs release/scripts/
           cp scripts/install.sh release/scripts/
