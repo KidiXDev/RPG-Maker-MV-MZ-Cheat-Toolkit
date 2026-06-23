@@ -88,7 +88,7 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
             ))}
           </nav>
         </aside>
-        <main className="overflow-auto p-6 md:p-10">
+        <main className="overflow-auto p-6 md:py-6 md:px-8">
           <PanelSwitch activePanel={activePanel} portalRoot={portalRoot} />
         </main>
       </section>

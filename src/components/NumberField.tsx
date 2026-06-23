@@ -5,10 +5,13 @@ type NumberFieldProps = {
   value: number;
   min?: number;
   max?: number;
+  step?: number;
+  /** Fire onChange on every keystroke instead of on blur/Enter. */
+  instant?: boolean;
   onChange(value: number): void;
 };
 
-export function NumberField({ label, value, min, max, onChange }: NumberFieldProps) {
+export function NumberField({ label, value, min, max, step, instant, onChange }: NumberFieldProps) {
   const [localValue, setLocalValue] = useState(String(value));
   const [prevValue, setPrevValue] = useState(value);
   const committedRef = useRef<number | null>(null);
@@ -18,8 +21,8 @@ export function NumberField({ label, value, min, max, onChange }: NumberFieldPro
     setLocalValue(String(value));
   }
 
-  function commit() {
-    let numeric = Number(localValue);
+  function commit(rawValue?: string) {
+    let numeric = Number(rawValue ?? localValue);
     if (isNaN(numeric)) {
       setLocalValue(String(value));
       return;
@@ -52,8 +55,15 @@ export function NumberField({ label, value, min, max, onChange }: NumberFieldPro
         value={localValue}
         min={min}
         max={max}
-        onChange={(event) => setLocalValue(event.target.value)}
-        onBlur={commit}
+        step={step}
+        onChange={(event) => {
+          const raw = event.target.value;
+          setLocalValue(raw);
+          if (instant) {
+            commit(raw);
+          }
+        }}
+        onBlur={() => commit()}
         onKeyDown={handleKeyDown}
       />
     </label>

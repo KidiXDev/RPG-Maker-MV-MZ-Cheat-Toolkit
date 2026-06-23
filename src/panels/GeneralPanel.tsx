@@ -16,7 +16,6 @@ import { PanelHeader } from './PanelHeader.tsx';
 export function GeneralPanel() {
   const [, refresh] = useReducer((value: number) => value + 1, 0);
   const moveSpeed = useCheatStore((state) => state.moveSpeed);
-  const gameSpeed = useCheatStore((state) => state.gameSpeed);
   const gameSpeedScope = useCheatStore((state) => state.gameSpeedScope);
   const noClip = useCheatStore((state) => state.noClip);
   const setStoredMoveSpeed = useCheatStore((state) => state.setMoveSpeed);
@@ -68,13 +67,16 @@ export function GeneralPanel() {
         <Card title="Runtime">
           <div className="grid gap-3">
             <NumberField
-              label={`Game speed (${getGameSpeed().toFixed(1)}x)`}
-              value={gameSpeed}
+              label={`Game speed (${getGameSpeed(gameSpeedScope).toFixed(1)}x)`}
+              value={getGameSpeed(gameSpeedScope)}
               min={0.1}
               max={10}
+              step={0.1}
+              instant
               onChange={(value) => {
-                setStoredGameSpeed(value);
                 setGameSpeed(value, gameSpeedScope);
+                setStoredGameSpeed(value);
+                refresh();
               }}
             />
             <Select

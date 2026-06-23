@@ -42,7 +42,7 @@ export function ShortcutsPanel() {
           Restore {DEFAULT_SHORTCUTS.length} defaults
         </Button>
       </div>
-      <div className="max-h-[55vh] overflow-y-auto grid gap-3 pr-1">
+      <div className="max-h-[60vh] md:max-h-[380px] overflow-y-auto grid gap-3 pr-1">
         {visibleShortcuts.map((shortcut) => (
           <div className="grid gap-3 rounded-lg border border-white/10 bg-white/10 p-4 md:grid-cols-[1fr_14rem]" key={shortcut.id}>
             <span>

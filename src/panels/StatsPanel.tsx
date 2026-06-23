@@ -31,12 +31,13 @@ export function StatsPanel() {
         title="Stats / Level"
         description="Per-actor level and parameter inspection with lightweight editing."
       />
-      <div className="mb-4 flex flex-wrap items-center gap-2 *:mr-2 *:mb-2">
-        <Button variant="ghost" onClick={refresh}>
+      <div className="mb-4 flex flex-wrap items-center">
+        <Button variant="ghost" onClick={refresh} className="mr-2 mb-2">
           Reload
         </Button>
         <Button
           variant="ghost"
+          className="mr-2 mb-2"
           onClick={() => {
             const reloaded = reloadPartyFromData();
             pushToast(
@@ -57,6 +58,7 @@ export function StatsPanel() {
             }
             key={actor.actorId()}
             onClick={() => setSelectedActorId(actor.actorId())}
+            className="mr-2 mb-2"
           >
             {actor.name()}
           </Button>

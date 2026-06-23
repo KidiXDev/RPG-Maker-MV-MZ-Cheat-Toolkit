@@ -5,7 +5,7 @@ type PanelHeaderProps = {
 
 export function PanelHeader({ title, description }: PanelHeaderProps) {
   return (
-    <header className="mb-6">
+    <header className="mb-4">
       <p className="font-rmc-mono text-xs tracking-[0.3em] text-rmc-aether uppercase">
         Cheat channel
       </p>

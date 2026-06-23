@@ -28,5 +28,7 @@ function applyPersistedRuntimeSettings() {
 
   setNoClip(state.noClip);
   setMoveSpeed(state.moveSpeed, true);
-  setGameSpeed(state.gameSpeed, state.gameSpeedScope);
+  // Game speed module initializes both scopes to 1x.
+  // Only restore the scope choice from persistence, not the legacy single value.
+  setGameSpeed(1, state.gameSpeedScope);
 }

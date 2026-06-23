@@ -67,7 +67,7 @@ export function SwitchesPanel() {
           Toggle filtered
         </Button>
       </div>
-      <div className="max-h-[48vh] overflow-auto rounded-lg border border-white/10">
+      <div className="max-h-[60vh] md:max-h-[380px] overflow-auto rounded-lg border border-white/10">
         <table className="w-full border-collapse text-left text-sm">
           <thead className="text-xs tracking-[0.18em] text-rmc-aether uppercase">
             <tr>
