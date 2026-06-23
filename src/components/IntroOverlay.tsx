@@ -37,7 +37,7 @@ export function IntroOverlay() {
     >
       <div className="flex flex-col items-center justify-center">
         <h1
-          className="font-rmc-display text-3xl font-black tracking-[0.3em] text-rmc-ember uppercase"
+          className="font-rmc-display text-3xl font-bold tracking-[0.3em] text-rmc-ember uppercase"
           style={{
             textShadow:
               '0 0 12px rgba(255, 179, 92, 0.45), 0 0 24px rgba(255, 179, 92, 0.2)'

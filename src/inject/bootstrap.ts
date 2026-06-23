@@ -1,6 +1,6 @@
 import { isGameReady, patchTouchInputPassThrough } from '../game/engine.ts';
 import { setMoveSpeed, setNoClip } from '../game/cheats/general.ts';
-import { setGameSpeed } from '../game/cheats/gameSpeed.ts';
+import { setGameSpeedAll, setGameSpeedBattle } from '../game/cheats/gameSpeed.ts';
 import { patchMessageSkip } from '../game/cheats/message.ts';
 import { setExpMultiplier, setDamageMultiplier } from '../game/cheats/multipliers.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
@@ -29,9 +29,9 @@ function applyPersistedRuntimeSettings() {
 
   setNoClip(state.noClip);
   setMoveSpeed(state.moveSpeed, true);
-  // Game speed module initializes both scopes to 1x.
-  // Only restore the scope choice from persistence, not the legacy single value.
-  setGameSpeed(1, state.gameSpeedScope);
+  // Restore both independent game speed values from persistence
+  setGameSpeedAll(state.gameSpeedAll);
+  setGameSpeedBattle(state.gameSpeedBattle);
   // Apply persisted multiplier settings
   if (state.expMultiplier !== 1) {
     setExpMultiplier(state.expMultiplier);

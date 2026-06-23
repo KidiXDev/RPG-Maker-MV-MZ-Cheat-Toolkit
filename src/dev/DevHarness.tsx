@@ -29,7 +29,7 @@ export function DevHarness({ children }: DevHarnessProps) {
         <p className="font-rmc-mono text-xs tracking-[0.35em] text-rmc-aether uppercase">
           Mock NW.js runtime
         </p>
-        <h1 className="mt-3 max-w-3xl font-rmc-display text-4xl font-black tracking-tight text-rmc-mist md:text-6xl">
+        <h1 className="mt-3 max-w-3xl font-rmc-display text-4xl font-bold tracking-tight text-rmc-mist md:text-6xl">
           RPG Maker MV/MZ Cheat Toolkit
         </h1>
         <p className="mt-4 max-w-2xl text-rmc-slate">

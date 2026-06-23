@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { CheatModal } from './components/CheatModal.tsx';
 import { ConfirmDialog } from './components/ConfirmDialog.tsx';
 import { IntroOverlay } from './components/IntroOverlay.tsx';
+import { OverlayHud } from './components/OverlayHud.tsx';
 import { ToastViewport } from './components/Toast.tsx';
 import { useShortcutManager } from './shortcuts/manager.ts';
 import { useCheatStore } from './store/useCheatStore.ts';
@@ -51,6 +52,7 @@ function App({ portalRoot }: AppProps) {
       {isOpen ? <CheatModal portalRoot={portalRoot} /> : null}
       {isIntroVisible ? <IntroOverlay /> : null}
       <ConfirmDialog portalRoot={portalRoot} />
+      <OverlayHud portalRoot={portalRoot} />
       <ToastViewport portalRoot={portalRoot} />
     </div>
   );

@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { z } from 'zod';
-import type { GameSpeedScope } from '../game/cheats/gameSpeed.ts';
 import { createCheatStorage } from '../game/storage.ts';
 import { generateId } from '../utils/id.ts';
 
@@ -34,15 +33,23 @@ const panelSchema = z.enum([
   'settings'
 ]);
 
+export type HudPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
 const persistedSchema = z.object({
   activePanel: panelSchema.catch('general'),
-  gameSpeed: z.number().min(0.1).max(10).catch(1),
-  gameSpeedScope: z.enum(['all', 'battle']).catch('all'),
+  gameSpeedAll: z.number().min(0.1).max(10).catch(1),
+  gameSpeedBattle: z.number().min(0.1).max(10).catch(1),
   moveSpeed: z.number().min(1).max(10).catch(4),
   noClip: z.boolean().catch(false),
   hideBadge: z.boolean().catch(false),
   expMultiplier: z.number().min(0).max(100).catch(1),
-  damageMultiplier: z.number().min(0).max(999).catch(1)
+  damageMultiplier: z.number().min(0).max(999).catch(1),
+  hudEnabled: z.boolean().catch(false),
+  hudPosition: z.enum(['top-left', 'top-right', 'bottom-left', 'bottom-right']).catch('top-left'),
+  hudShowFps: z.boolean().catch(true),
+  hudShowMap: z.boolean().catch(true),
+  hudShowCoords: z.boolean().catch(true),
+  hudShowEvents: z.boolean().catch(true),
 });
 
 type CheatState = z.infer<typeof persistedSchema> & {
@@ -62,13 +69,19 @@ type CheatState = z.infer<typeof persistedSchema> & {
   showIntro(): void;
   hideIntro(): void;
   setActivePanel(panel: PanelId): void;
-  setGameSpeed(speed: number): void;
-  setGameSpeedScope(scope: GameSpeedScope): void;
+  setGameSpeedAll(speed: number): void;
+  setGameSpeedBattle(speed: number): void;
   setMoveSpeed(speed: number): void;
   setNoClip(enabled: boolean): void;
   setHideBadge(hide: boolean): void;
   setExpMultiplier(multiplier: number): void;
   setDamageMultiplier(multiplier: number): void;
+  setHudEnabled(enabled: boolean): void;
+  setHudPosition(pos: HudPosition): void;
+  setHudShowFps(show: boolean): void;
+  setHudShowMap(show: boolean): void;
+  setHudShowCoords(show: boolean): void;
+  setHudShowEvents(show: boolean): void;
   requestConfirm(options: {
     title: string;
     message: string;
@@ -85,11 +98,17 @@ export const useCheatStore = create<CheatState>()(
     (set) => ({
       activePanel: 'general',
       confirmDialog: null,
-      gameSpeed: 1,
-      gameSpeedScope: 'all',
+      gameSpeedAll: 1,
+      gameSpeedBattle: 1,
       hideBadge: false,
       expMultiplier: 1,
       damageMultiplier: 1,
+      hudEnabled: false,
+      hudPosition: 'top-left',
+      hudShowFps: true,
+      hudShowMap: true,
+      hudShowCoords: true,
+      hudShowEvents: true,
       isOpen: false,
       isIntroVisible: true,
       moveSpeed: 4,
@@ -101,13 +120,19 @@ export const useCheatStore = create<CheatState>()(
       showIntro: () => set({ isIntroVisible: true }),
       hideIntro: () => set({ isIntroVisible: false }),
       setActivePanel: (panel) => set({ activePanel: panel }),
-      setGameSpeed: (speed) => set({ gameSpeed: speed }),
-      setGameSpeedScope: (scope) => set({ gameSpeedScope: scope }),
+      setGameSpeedAll: (speed) => set({ gameSpeedAll: speed }),
+      setGameSpeedBattle: (speed) => set({ gameSpeedBattle: speed }),
       setMoveSpeed: (speed) => set({ moveSpeed: speed }),
       setNoClip: (enabled) => set({ noClip: enabled }),
       setHideBadge: (hide) => set({ hideBadge: hide }),
       setExpMultiplier: (multiplier) => set({ expMultiplier: multiplier }),
       setDamageMultiplier: (multiplier) => set({ damageMultiplier: multiplier }),
+      setHudEnabled: (enabled) => set({ hudEnabled: enabled }),
+      setHudPosition: (pos) => set({ hudPosition: pos }),
+      setHudShowFps: (show) => set({ hudShowFps: show }),
+      setHudShowMap: (show) => set({ hudShowMap: show }),
+      setHudShowCoords: (show) => set({ hudShowCoords: show }),
+      setHudShowEvents: (show) => set({ hudShowEvents: show }),
       requestConfirm: ({ title, message, confirmLabel = 'Confirm', tone = 'info', onConfirm }) =>
         set({
           confirmDialog: {

@@ -1,6 +1,5 @@
 import { useReducer } from 'react';
-import { Button, Card } from '../components/ui/index.ts';
-import { NumberField } from '../components/NumberField.tsx';
+import { Button, Card, Slider } from '../components/ui/index.ts';
 import { partyMembers } from '../game/cheats/battle.ts';
 import {
   addExpToAll,
@@ -110,34 +109,22 @@ export function TrainerPanel() {
         </Card>
 
         <Card title="Multipliers">
-          <div className="grid gap-3">
-            <NumberField
-              label={`EXP Multiplier (${getExpMultiplier().toFixed(1)}x)`}
-              value={getExpMultiplier()}
-              min={0}
-              max={100}
-              step={0.5}
-              instant
-              onChange={(value) => {
-                setExpMultiplier(value);
-                setStoredExpMultiplier(value);
-                refresh();
-              }}
-            />
-            <NumberField
-              label={`Damage Multiplier (${getDamageMultiplier().toFixed(1)}x)`}
-              value={getDamageMultiplier()}
-              min={0}
-              max={999}
-              step={0.5}
-              instant
-              onChange={(value) => {
-                setDamageMultiplier(value);
-                setStoredDamageMultiplier(value);
-                refresh();
-              }}
-            />
-            <div className="grid grid-cols-2 gap-2">
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Slider
+                label="EXP Multiplier"
+                value={getExpMultiplier()}
+                min={0}
+                max={100}
+                step={0.5}
+                instant
+                formatValue={(v) => `${v.toFixed(1)}x`}
+                onChange={(value) => {
+                  setExpMultiplier(value);
+                  setStoredExpMultiplier(value);
+                  refresh();
+                }}
+              />
               <Button
                 variant="ghost"
                 size="sm"
@@ -149,6 +136,22 @@ export function TrainerPanel() {
               >
                 Reset EXP
               </Button>
+            </div>
+            <div className="grid gap-2">
+              <Slider
+                label="Damage Multiplier"
+                value={getDamageMultiplier()}
+                min={0}
+                max={999}
+                step={0.5}
+                instant
+                formatValue={(v) => `${v.toFixed(1)}x`}
+                onChange={(value) => {
+                  setDamageMultiplier(value);
+                  setStoredDamageMultiplier(value);
+                  refresh();
+                }}
+              />
               <Button
                 variant="ghost"
                 size="sm"

@@ -35,7 +35,7 @@ export function ConfirmDialog({ portalRoot }: ConfirmDialogProps) {
         <p className="font-rmc-mono text-xs tracking-[0.28em] text-rmc-aether uppercase">
           Confirm action
         </p>
-        <h3 className="mt-2 font-rmc-display text-2xl font-black">
+        <h3 className="mt-2 font-rmc-display text-2xl font-semibold">
           {confirmDialog.title}
         </h3>
         <p className="mt-3 text-sm leading-6 text-rmc-slate">

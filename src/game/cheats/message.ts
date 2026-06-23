@@ -1,4 +1,4 @@
-import { getGameSpeed, getGameSpeedScope, setGameSpeed } from './gameSpeed.ts';
+import { getGameSpeedAll, getGameSpeedBattle, setGameSpeedAll, setGameSpeedBattle } from './gameSpeed.ts';
 import { gameWindow } from '../types.ts';
 
 type RuntimePrototype = Record<string, unknown>;
@@ -7,22 +7,22 @@ type RuntimeMethod = (this: RuntimePrototype, ...args: unknown[]) => unknown;
 const originals = new WeakMap<RuntimePrototype, Map<string, RuntimeMethod>>();
 let skipEnabled = false;
 let patched = false;
-let previousSpeed: { multiplier: number; scope: ReturnType<typeof getGameSpeedScope> } | null = null;
+let previousSpeed: { all: number; battle: number } | null = null;
 
 export function startMessageSkip(multiplier = 6) {
   patchMessageSkip();
 
   if (!skipEnabled) {
     previousSpeed = {
-      multiplier: getGameSpeed(),
-      scope: getGameSpeedScope()
+      all: getGameSpeedAll(),
+      battle: getGameSpeedBattle(),
     };
   }
 
   skipEnabled = true;
 
   if (multiplier > 1) {
-    setGameSpeed(multiplier, 'all');
+    setGameSpeedAll(multiplier);
   }
 }
 
@@ -30,7 +30,8 @@ export function stopMessageSkip() {
   skipEnabled = false;
 
   if (previousSpeed) {
-    setGameSpeed(previousSpeed.multiplier, previousSpeed.scope);
+    setGameSpeedAll(previousSpeed.all);
+    setGameSpeedBattle(previousSpeed.battle);
     previousSpeed = null;
   }
 }

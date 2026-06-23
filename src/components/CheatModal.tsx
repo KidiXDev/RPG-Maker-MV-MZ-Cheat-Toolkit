@@ -65,7 +65,7 @@ export function CheatModal({ portalRoot }: CheatModalProps) {
         <aside className="border-b border-white/10 bg-black/20 p-3 md:border-r md:border-b-0 md:p-3">
           <div className="grid grid-cols-[1fr_auto] items-start gap-2">
             <div>
-              <h2 className="font-rmc-display text-base font-black tracking-tight">
+              <h2 className="font-rmc-display text-base font-bold tracking-tight">
                 RMC Toolkit
               </h2>
             </div>

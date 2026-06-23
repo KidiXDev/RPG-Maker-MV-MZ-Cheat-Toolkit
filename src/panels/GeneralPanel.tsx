@@ -1,26 +1,37 @@
 import { useReducer } from 'react';
-import { Button, Card, Select } from '../components/ui/index.ts';
 import { NumberField } from '../components/NumberField.tsx';
 import { Toggle } from '../components/Toggle.tsx';
-import { getGold, setGold, setMoveSpeed, setNoClip } from '../game/cheats/general.ts';
+import { Button, Card, Slider } from '../components/ui/index.ts';
 import {
-  getGameSpeed,
-  restoreGameSpeed,
-  setGameSpeed,
-  setGameSpeedScope
+  getGameSpeedAll,
+  getGameSpeedBattle,
+  setGameSpeedAll,
+  setGameSpeedBattle
 } from '../game/cheats/gameSpeed.ts';
-import { gotoTitle, openLoadScene, openSaveScene, reloadGame } from '../game/cheats/scene.ts';
+import {
+  getGold,
+  setGold,
+  setMoveSpeed,
+  setNoClip
+} from '../game/cheats/general.ts';
+import {
+  gotoTitle,
+  openLoadScene,
+  openSaveScene,
+  reloadGame
+} from '../game/cheats/scene.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
 import { PanelHeader } from './PanelHeader.tsx';
 
 export function GeneralPanel() {
   const [, refresh] = useReducer((value: number) => value + 1, 0);
   const moveSpeed = useCheatStore((state) => state.moveSpeed);
-  const gameSpeedScope = useCheatStore((state) => state.gameSpeedScope);
   const noClip = useCheatStore((state) => state.noClip);
   const setStoredMoveSpeed = useCheatStore((state) => state.setMoveSpeed);
-  const setStoredGameSpeed = useCheatStore((state) => state.setGameSpeed);
-  const setStoredGameSpeedScope = useCheatStore((state) => state.setGameSpeedScope);
+  const setStoredGameSpeedAll = useCheatStore((state) => state.setGameSpeedAll);
+  const setStoredGameSpeedBattle = useCheatStore(
+    (state) => state.setGameSpeedBattle
+  );
   const setStoredNoClip = useCheatStore((state) => state.setNoClip);
   const pushToast = useCheatStore((state) => state.pushToast);
   const requestConfirm = useCheatStore((state) => state.requestConfirm);
@@ -36,17 +47,19 @@ export function GeneralPanel() {
           <div className="grid gap-3">
             <Toggle
               checked={noClip}
-              label="No clip movement"
+              label="No Clip"
               onChange={(enabled) => {
                 setNoClip(enabled);
                 setStoredNoClip(enabled);
               }}
             />
-            <NumberField
+            <Slider
               label="Move speed"
               value={moveSpeed}
               min={1}
               max={10}
+              step={1}
+              instant
               onChange={(value) => {
                 setStoredMoveSpeed(value);
                 setMoveSpeed(value, true);
@@ -65,42 +78,71 @@ export function GeneralPanel() {
           </div>
         </Card>
         <Card title="Runtime">
-          <div className="grid gap-3">
-            <NumberField
-              label={`Game speed (${getGameSpeed(gameSpeedScope).toFixed(1)}x)`}
-              value={getGameSpeed(gameSpeedScope)}
+          <div className="grid gap-4">
+            <Slider
+              label="All Scenes Speed"
+              value={getGameSpeedAll()}
               min={0.1}
               max={10}
               step={0.1}
               instant
+              formatValue={(v) => `${v.toFixed(1)}x`}
               onChange={(value) => {
-                setGameSpeed(value, gameSpeedScope);
-                setStoredGameSpeed(value);
+                setGameSpeedAll(value);
+                setStoredGameSpeedAll(value);
                 refresh();
               }}
             />
-            <Select
-              label="Game speed scope"
-              options={[
-                { value: 'all', label: 'All scenes' },
-                { value: 'battle', label: 'Battle only' }
-              ]}
-              value={gameSpeedScope}
-              onChange={(event) => {
-                const scope = event.target.value === 'battle' ? 'battle' : 'all';
-                setStoredGameSpeedScope(scope);
-                setGameSpeedScope(scope);
+            <Slider
+              label="Battle Speed"
+              value={getGameSpeedBattle()}
+              min={0.1}
+              max={10}
+              step={0.1}
+              instant
+              formatValue={(v) => `${v.toFixed(1)}x`}
+              onChange={(value) => {
+                setGameSpeedBattle(value);
+                setStoredGameSpeedBattle(value);
                 refresh();
               }}
             />
-            <Button variant="secondary" onClick={() => { restoreGameSpeed(); setStoredGameSpeed(1); setStoredGameSpeedScope('all'); refresh(); }}>
-              Restore 1x
-            </Button>
             <div className="grid grid-cols-2 gap-2">
-              <Button variant="ghost" onClick={() => requestConfirm({ title: 'Go to title?', message: 'Unsaved progress can be lost when the game changes scene.', confirmLabel: 'Go to title', onConfirm: gotoTitle })}>Title</Button>
-              <Button variant="ghost" onClick={openSaveScene}>Save</Button>
-              <Button variant="ghost" onClick={openLoadScene}>Load</Button>
-              <Button variant="danger" onClick={() => requestConfirm({ title: 'Reload game data?', message: 'Reloading the game runtime can interrupt the current scene.', confirmLabel: 'Reload', tone: 'danger', onConfirm: reloadGame })}>Reload</Button>
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  requestConfirm({
+                    title: 'Go to title?',
+                    message:
+                      'Unsaved progress can be lost when the game changes scene.',
+                    confirmLabel: 'Go to title',
+                    onConfirm: gotoTitle
+                  })
+                }
+              >
+                Title
+              </Button>
+              <Button variant="ghost" onClick={openSaveScene}>
+                Save
+              </Button>
+              <Button variant="ghost" onClick={openLoadScene}>
+                Load
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() =>
+                  requestConfirm({
+                    title: 'Reload game data?',
+                    message:
+                      'Reloading the game runtime can interrupt the current scene.',
+                    confirmLabel: 'Reload',
+                    tone: 'danger',
+                    onConfirm: reloadGame
+                  })
+                }
+              >
+                Reload
+              </Button>
             </div>
           </div>
         </Card>
