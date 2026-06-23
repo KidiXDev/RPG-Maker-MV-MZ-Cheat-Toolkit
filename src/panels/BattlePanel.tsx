@@ -37,9 +37,7 @@ export function BattlePanel() {
         <Button variant="ghost" onClick={() => { recoverParty(); refresh(); }}>Recover party</Button>
         <Button variant="ghost" onClick={() => { woundParty(); refresh(); }}>Wound party</Button>
         <Button variant="ghost" onClick={() => { fillPartyTp(); refresh(); }}>Fill TP</Button>
-        <Button variant="ghost" onClick={() => { setPartyHp(0); refresh(); }}>Party HP 0</Button>
         <Button variant="ghost" onClick={() => { setPartyHp(1); refresh(); }}>Party HP 1</Button>
-        <Button variant="ghost" onClick={() => { setEnemiesHp(0); refresh(); }}>Enemies HP 0</Button>
         <Button variant="ghost" onClick={() => { setEnemiesHp(1); refresh(); }}>Enemies HP 1</Button>
       </div>
       <DataTable

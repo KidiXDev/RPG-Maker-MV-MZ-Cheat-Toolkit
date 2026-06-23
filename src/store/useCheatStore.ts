@@ -14,7 +14,10 @@ export type PanelId =
   | 'switches'
   | 'location'
   | 'teleport'
-  | 'shortcuts';
+  | 'shortcuts'
+  | 'trainer'
+  | 'events'
+  | 'settings';
 
 const panelSchema = z.enum([
   'general',
@@ -25,7 +28,10 @@ const panelSchema = z.enum([
   'switches',
   'location',
   'teleport',
-  'shortcuts'
+  'shortcuts',
+  'trainer',
+  'events',
+  'settings'
 ]);
 
 const persistedSchema = z.object({
@@ -33,7 +39,10 @@ const persistedSchema = z.object({
   gameSpeed: z.number().min(0.1).max(10).catch(1),
   gameSpeedScope: z.enum(['all', 'battle']).catch('all'),
   moveSpeed: z.number().min(1).max(10).catch(4),
-  noClip: z.boolean().catch(false)
+  noClip: z.boolean().catch(false),
+  hideBadge: z.boolean().catch(false),
+  expMultiplier: z.number().min(0).max(100).catch(1),
+  damageMultiplier: z.number().min(0).max(999).catch(1)
 });
 
 type CheatState = z.infer<typeof persistedSchema> & {
@@ -57,6 +66,9 @@ type CheatState = z.infer<typeof persistedSchema> & {
   setGameSpeedScope(scope: GameSpeedScope): void;
   setMoveSpeed(speed: number): void;
   setNoClip(enabled: boolean): void;
+  setHideBadge(hide: boolean): void;
+  setExpMultiplier(multiplier: number): void;
+  setDamageMultiplier(multiplier: number): void;
   requestConfirm(options: {
     title: string;
     message: string;
@@ -75,6 +87,9 @@ export const useCheatStore = create<CheatState>()(
       confirmDialog: null,
       gameSpeed: 1,
       gameSpeedScope: 'all',
+      hideBadge: false,
+      expMultiplier: 1,
+      damageMultiplier: 1,
       isOpen: false,
       isIntroVisible: true,
       moveSpeed: 4,
@@ -90,6 +105,9 @@ export const useCheatStore = create<CheatState>()(
       setGameSpeedScope: (scope) => set({ gameSpeedScope: scope }),
       setMoveSpeed: (speed) => set({ moveSpeed: speed }),
       setNoClip: (enabled) => set({ noClip: enabled }),
+      setHideBadge: (hide) => set({ hideBadge: hide }),
+      setExpMultiplier: (multiplier) => set({ expMultiplier: multiplier }),
+      setDamageMultiplier: (multiplier) => set({ damageMultiplier: multiplier }),
       requestConfirm: ({ title, message, confirmLabel = 'Confirm', tone = 'info', onConfirm }) =>
         set({
           confirmDialog: {

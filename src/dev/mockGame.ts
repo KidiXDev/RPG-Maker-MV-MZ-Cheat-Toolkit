@@ -149,7 +149,8 @@ export function setupMockGame() {
   };
   gameWindow.$gameMap = {
     mapId: () => 1,
-    displayName: () => 'Harbor of Ash'
+    displayName: () => 'Harbor of Ash',
+    events: () => []
   };
   gameWindow.$gameParty = {
     gold: () => 740,

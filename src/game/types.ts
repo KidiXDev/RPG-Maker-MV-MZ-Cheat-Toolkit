@@ -48,6 +48,45 @@ export type Enemy = {
 
 export type SceneConstructor = new () => object;
 
+export type GameEventData = {
+  id: number;
+  name: string;
+  pages: Array<{
+    conditions?: {
+      switch1Valid?: boolean;
+      switch1Id?: number;
+      switch2Valid?: boolean;
+      switch2Id?: number;
+      variableValid?: boolean;
+      variableId?: number;
+      variableValue?: number;
+    };
+    trigger?: number;
+    list?: Array<{
+      code: number;
+      indent: number;
+      parameters: unknown[];
+    }>;
+  }>;
+  x: number;
+  y: number;
+};
+
+export type GameEvent = {
+  eventId(): number;
+  event(): GameEventData;
+  start(): void;
+  erase(): void;
+  isStarting(): boolean;
+  isRunning(): boolean;
+  pageIndex(): number;
+  page(): GameEventData['pages'][number] | undefined;
+  x: number;
+  y: number;
+  _trigger?: number;
+  _erased?: boolean;
+};
+
 export type GameGlobalWindow = Window &
   typeof globalThis & {
     $dataSystem?: DataSystem;
@@ -55,6 +94,9 @@ export type GameGlobalWindow = Window &
     $dataWeapons?: Array<DataItem | null>;
     $dataArmors?: Array<DataItem | null>;
     $dataMapInfos?: Array<DataMapInfo | null>;
+    $dataMap?: {
+      events?: Array<GameEventData | null>;
+    };
     $gameVariables?: {
       value(id: number): unknown;
       setValue(id: number, value: unknown): void;
@@ -79,6 +121,8 @@ export type GameGlobalWindow = Window &
     $gameMap?: {
       mapId(): number;
       displayName?(): string;
+      events(): GameEvent[];
+      _events?: Array<GameEvent | null>;
     };
     $gameParty?: {
       _gold?: number;
@@ -89,6 +133,9 @@ export type GameGlobalWindow = Window &
       inBattle?(): boolean;
       gainItem(item: DataItem, amount: number, includeEquip?: boolean): void;
       numItems(item: DataItem): number;
+      allMembers?(): Actor[];
+      removeActor?(actorId: number): void;
+      addActor?(actorId: number): void;
     };
     $gameSystem?: {
       _encounterEnabled?: boolean;
@@ -98,6 +145,9 @@ export type GameGlobalWindow = Window &
     };
     $gameTroop?: {
       members(): Enemy[];
+    };
+    $gameActors?: {
+      actor(actorId: number): Actor | null;
     };
     BattleManager?: {
       processVictory(): void;
@@ -134,6 +184,21 @@ export type GameGlobalWindow = Window &
     };
     Window_BattleLog?: {
       prototype: Record<string, unknown>;
+    };
+    Game_Actor?: {
+      prototype: Record<string, unknown> & {
+        changeExp(exp: number, show: boolean): void;
+      };
+    };
+    Game_Action?: {
+      prototype: Record<string, unknown> & {
+        evalDamageFormula(target: Record<string, unknown>): number;
+      };
+    };
+    Game_ActionResult?: {
+      prototype: Record<string, unknown> & {
+        makeDamage(value: number, elementId: number): void;
+      };
     };
     require?: (moduleName: string) => unknown;
     nw?: {

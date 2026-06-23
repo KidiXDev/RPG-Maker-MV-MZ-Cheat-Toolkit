@@ -1,12 +1,15 @@
 import { useEffect, useRef } from 'react';
 import { BattlePanel } from '../panels/BattlePanel.tsx';
+import { EventsPanel } from '../panels/EventsPanel.tsx';
 import { GeneralPanel } from '../panels/GeneralPanel.tsx';
 import { InventoryPanel } from '../panels/InventoryPanel.tsx';
 import { LocationPanel } from '../panels/LocationPanel.tsx';
+import { SettingsPanel } from '../panels/SettingsPanel.tsx';
 import { ShortcutsPanel } from '../panels/ShortcutsPanel.tsx';
 import { StatsPanel } from '../panels/StatsPanel.tsx';
 import { SwitchesPanel } from '../panels/SwitchesPanel.tsx';
 import { TeleportPanel } from '../panels/TeleportPanel.tsx';
+import { TrainerPanel } from '../panels/TrainerPanel.tsx';
 import { VariablesPanel } from '../panels/VariablesPanel.tsx';
 import { useCheatStore, type PanelId } from '../store/useCheatStore.ts';
 
@@ -16,6 +19,7 @@ type CheatModalProps = {
 
 const panels: Array<{ id: PanelId; label: string }> = [
   { id: 'general', label: 'General' },
+  { id: 'trainer', label: 'Trainer' },
   { id: 'battle', label: 'Battle' },
   { id: 'stats', label: 'Stats' },
   { id: 'inventory', label: 'Inventory' },
@@ -23,7 +27,9 @@ const panels: Array<{ id: PanelId; label: string }> = [
   { id: 'switches', label: 'Switches' },
   { id: 'location', label: 'Locations' },
   { id: 'teleport', label: 'Teleport' },
-  { id: 'shortcuts', label: 'Shortcuts' }
+  { id: 'events', label: 'Events' },
+  { id: 'shortcuts', label: 'Shortcuts' },
+  { id: 'settings', label: 'Settings' }
 ];
 
 export function CheatModal({ portalRoot }: CheatModalProps) {
@@ -130,8 +136,20 @@ function PanelSwitch({
     return <TeleportPanel />;
   }
 
+  if (activePanel === 'events') {
+    return <EventsPanel />;
+  }
+
+  if (activePanel === 'trainer') {
+    return <TrainerPanel />;
+  }
+
   if (activePanel === 'shortcuts') {
     return <ShortcutsPanel />;
+  }
+
+  if (activePanel === 'settings') {
+    return <SettingsPanel />;
   }
 
   return <GeneralPanel />;
