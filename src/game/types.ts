@@ -136,6 +136,9 @@ export type GameGlobalWindow = Window &
       value(key: [number, number, string]): boolean;
       setValue(key: [number, number, string], value: boolean): void;
     };
+    $gameTemp?: {
+      setDestination(x: number, y: number): void;
+    };
     $gameParty?: {
       _gold?: number;
       gold(): number;

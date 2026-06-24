@@ -13,6 +13,7 @@ import {
   TRIGGER_LABELS
 } from '../game/cheats/minimapRender.ts';
 import { teleportTo } from '../game/cheats/teleport.ts';
+import { gameWindow } from '../game/types.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
 import { PanelHeader } from './PanelHeader.tsx';
 
@@ -40,6 +41,8 @@ export function MinimapPanel() {
   const resetMinimapOverlayPosition = useCheatStore(
     (s) => s.resetMinimapOverlayPosition
   );
+  const clickToTeleport = useCheatStore((s) => s.minimapClickToTeleport);
+  const setMinimapClickToTeleport = useCheatStore((s) => s.setMinimapClickToTeleport);
   const pushToast = useCheatStore((s) => s.pushToast);
 
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
@@ -209,9 +212,19 @@ export function MinimapPanel() {
     if (e.button !== 0) return; // Left click only
     const tile = getPanelCanvasTile(e);
     if (!tile || !data) return;
-    teleportTo(data.mapId, tile.x, tile.y);
-    setLastTeleport(`(${tile.x}, ${tile.y})`);
-    pushToast(`Teleported to (${tile.x}, ${tile.y})`);
+
+    if (clickToTeleport) {
+      teleportTo(data.mapId, tile.x, tile.y);
+      setLastTeleport(`(${tile.x}, ${tile.y})`);
+      pushToast(`Teleported to (${tile.x}, ${tile.y})`);
+    } else {
+      const win = gameWindow();
+      if (win.$gameTemp?.setDestination) {
+        win.$gameTemp.setDestination(tile.x, tile.y);
+      } else {
+        pushToast(`Failed to navigate: game engine not ready`, 'danger');
+      }
+    }
   }
 
   const hasData = data && data.width > 0;
@@ -243,6 +256,19 @@ export function MinimapPanel() {
             >
               {espEnabled ? '● ESP ON' : '○ ESP OFF'}
             </button>
+
+            {/* Click to Teleport Checkbox */}
+            <div className="mr-4 flex items-center">
+              <label className="cursor-pointer flex items-center text-rmc-mist font-semibold">
+                <input
+                  className="mr-1.5 h-4 w-4 accent-rmc-ember cursor-pointer"
+                  type="checkbox"
+                  checked={clickToTeleport}
+                  onChange={(e) => setMinimapClickToTeleport(e.target.checked)}
+                />
+                Click to Teleport
+              </label>
+            </div>
 
             {/* HUD Overlay Toggle */}
             <div className="mr-4 flex items-center">

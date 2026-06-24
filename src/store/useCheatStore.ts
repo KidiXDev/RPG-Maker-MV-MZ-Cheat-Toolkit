@@ -52,6 +52,7 @@ type CheatValues = {
   minimapOverlayY: number;
   minimapOverlayRatioX: number | null;
   minimapOverlayRatioY: number | null;
+  minimapClickToTeleport: boolean;
 };
 
 // Only these settings persist across sessions. Cheat toggles/values do not.
@@ -73,7 +74,8 @@ const persistedSchema = z.object({
   minimapOverlayX: z.number().min(0).catch(24),
   minimapOverlayY: z.number().min(0).catch(96),
   minimapOverlayRatioX: z.number().min(0).max(1).nullable().catch(null),
-  minimapOverlayRatioY: z.number().min(0).max(1).nullable().catch(null)
+  minimapOverlayRatioY: z.number().min(0).max(1).nullable().catch(null),
+  minimapClickToTeleport: z.boolean().catch(true)
 });
 
 type CheatState = CheatValues & {
@@ -121,6 +123,7 @@ type CheatState = CheatValues & {
     ratioY: number;
   }): void;
   resetMinimapOverlayPosition(): void;
+  setMinimapClickToTeleport(enabled: boolean): void;
   requestConfirm(options: {
     title: string;
     message: string;
@@ -158,6 +161,7 @@ export const useCheatStore = create<CheatState>()(
       minimapOverlayY: 96,
       minimapOverlayRatioX: null,
       minimapOverlayRatioY: null,
+      minimapClickToTeleport: true,
       isOpen: false,
       isIntroVisible: true,
       gameReady: false,
@@ -207,6 +211,8 @@ export const useCheatStore = create<CheatState>()(
           minimapOverlayRatioX: null,
           minimapOverlayRatioY: null
         }),
+      setMinimapClickToTeleport: (enabled) =>
+        set({ minimapClickToTeleport: enabled }),
       requestConfirm: ({
         title,
         message,

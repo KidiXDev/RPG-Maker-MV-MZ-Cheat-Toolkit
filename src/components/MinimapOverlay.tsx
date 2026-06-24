@@ -6,6 +6,7 @@ import {
   type MinimapViewport
 } from '../game/cheats/minimapRender.ts';
 import { teleportTo } from '../game/cheats/teleport.ts';
+import { gameWindow } from '../game/types.ts';
 import { useCheatStore } from '../store/useCheatStore.ts';
 
 const OVERLAY_SIZE = 176;
@@ -91,6 +92,7 @@ function stopGameMouseEvent(event: MouseEvent) {
 export function MinimapOverlay() {
   const enabled = useCheatStore((state) => state.minimapOverlayEnabled);
   const gameReady = useCheatStore((state) => state.gameReady);
+  const clickToTeleport = useCheatStore((state) => state.minimapClickToTeleport);
   const opacity = useCheatStore((state) => state.minimapOverlayOpacity);
   const x = useCheatStore((state) => state.minimapOverlayX);
   const y = useCheatStore((state) => state.minimapOverlayY);
@@ -249,8 +251,18 @@ export function MinimapOverlay() {
         viewport
       });
       if (!tile) return;
-      teleportTo(data.mapId, tile.x, tile.y);
-      pushToast(`Teleported to (${tile.x}, ${tile.y})`);
+
+      if (clickToTeleport) {
+        teleportTo(data.mapId, tile.x, tile.y);
+        pushToast(`Teleported to (${tile.x}, ${tile.y})`);
+      } else {
+        const win = gameWindow();
+        if (win.$gameTemp?.setDestination) {
+          win.$gameTemp.setDestination(tile.x, tile.y);
+        } else {
+          pushToast(`Failed to navigate: game engine not ready`, 'danger');
+        }
+      }
     }
 
     function handleDoubleClick(event: MouseEvent) {
@@ -279,7 +291,7 @@ export function MinimapOverlay() {
       if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
       root.remove();
     };
-  }, [enabled, gameReady, opacity, pushToast, ratioX, ratioY, setPosition, x, y]);
+  }, [enabled, gameReady, clickToTeleport, opacity, pushToast, ratioX, ratioY, setPosition, x, y]);
 
   return null;
 }
