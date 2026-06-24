@@ -20,11 +20,12 @@ function getTriggerColor(trigger: number): string {
  */
 export function EspOverlay() {
   const espEnabled = useCheatStore((s) => s.espEnabled);
+  const gameReady = useCheatStore((s) => s.gameReady);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    if (!espEnabled) return;
+    if (!espEnabled || !gameReady) return;
 
     // Create canvas directly on body, not inside shadow root
     const canvas = document.createElement('canvas');
@@ -119,15 +120,15 @@ export function EspOverlay() {
         // Label above marker
         ctx.font = 'bold 11px monospace';
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
+        ctx.textBaseline = 'middle'; // Adjusted textBaseline for better alignment
 
         // Shadow for readability
         ctx.strokeStyle = 'rgba(0,0,0,0.85)';
         ctx.lineWidth = 3;
         ctx.lineJoin = 'round';
-        ctx.strokeText(ev.name.length > 14 ? ev.name.slice(0, 13) + '…' : ev.name, cx, cy - r - 2);
+        ctx.strokeText(ev.name.length > 14 ? ev.name.slice(0, 13) + '…' : ev.name, cx, cy - r - 8);
         ctx.fillStyle = color;
-        ctx.fillText(ev.name.length > 14 ? ev.name.slice(0, 13) + '…' : ev.name, cx, cy - r - 2);
+        ctx.fillText(ev.name.length > 14 ? ev.name.slice(0, 13) + '…' : ev.name, cx, cy - r - 8);
 
         ctx.restore();
       }
@@ -167,7 +168,7 @@ export function EspOverlay() {
       canvas.remove();
       canvasRef.current = null;
     };
-  }, [espEnabled]);
+  }, [espEnabled, gameReady]);
 
   return null; // No DOM output — the canvas is managed imperatively
 }

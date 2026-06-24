@@ -107,18 +107,32 @@ export function MinimapPanel() {
     return () => window.clearInterval(id);
   }, []);
 
-  // Redraw canvas when data, hover, or pan offset changes
+  // Redraw canvas with requestAnimationFrame loop to animate player pulse & events in real-time
   useEffect(() => {
     if (!canvasRef.current || !data) return;
-    const cell = getCellSize(data.width, data.height);
-    drawMinimap(canvasRef.current, data, {
-      hoveredTile,
-      viewport: {
-        centerX: data.width / 2 + panOffset.x,
-        centerY: data.height / 2 + panOffset.y,
-        cell
+    let active = true;
+
+    function renderLoop() {
+      if (!active) return;
+      if (canvasRef.current && data) {
+        const cell = getCellSize(data.width, data.height);
+        drawMinimap(canvasRef.current, data, {
+          hoveredTile,
+          viewport: {
+            centerX: data.width / 2 + panOffset.x,
+            centerY: data.height / 2 + panOffset.y,
+            cell
+          }
+        });
       }
-    });
+      requestAnimationFrame(renderLoop);
+    }
+
+    const rafId = requestAnimationFrame(renderLoop);
+    return () => {
+      active = false;
+      cancelAnimationFrame(rafId);
+    };
   }, [data, hoveredTile, panOffset]);
 
   function getPanelCanvasTile(
@@ -376,118 +390,105 @@ export function MinimapPanel() {
         </div>
 
         {/* Right Column: Inspector Sidebar (Fixed Height) */}
-        <div className="rounded-xl border border-white/10 bg-rmc-ink/80 p-4 h-[360px] flex flex-col">
-          <h3 className="text-xs font-bold tracking-wider text-rmc-slate uppercase mb-3 border-b border-white/10 pb-1.5">
+        <div className="rounded-xl border border-white/10 bg-rmc-ink/85 p-4 h-[360px] flex flex-col shadow-inner">
+          <h3 className="text-xs font-bold tracking-wider text-rmc-slate uppercase mb-3.5 border-b border-white/10 pb-2">
             Map Inspector
           </h3>
 
           {hasData ? (
-            <div>
+            <div className="flex-1 flex flex-col justify-between">
               {/* Tile/Event details */}
               {hoveredTile ? (
-                <div>
+                <div className="flex flex-col gap-2">
                   {/* Position info */}
-                  <div className="flex items-center justify-between text-xs font-mono">
+                  <div className="flex items-center justify-between text-xs font-mono py-1 px-0.5">
                     <span className="text-rmc-slate">Coords:</span>
-                    <span className="text-rmc-mist font-semibold">
+                    <span className="text-rmc-ember font-bold">
                       ({hoveredTile.x}, {hoveredTile.y})
                     </span>
                   </div>
 
                   {/* Passability indicator */}
-                  <div className="mt-2.5 flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between text-xs py-1 px-0.5">
                     <span className="text-rmc-slate">Passability:</span>
                     {data.passable.length > 0 ? (
                       data.passable[hoveredTile.y]?.[hoveredTile.x] ? (
                         <span
-                          className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-emerald-400 border"
-                          style={{
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderColor: 'rgba(16, 185, 129, 0.2)'
-                          }}
+                          className="rounded px-2 py-0.5 text-[9px] font-bold text-emerald-400 border border-emerald-500/20 bg-emerald-500/10"
                         >
-                          Passable
+                          WALKABLE
                         </span>
                       ) : (
                         <span
-                          className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-red-400 border"
-                          style={{
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderColor: 'rgba(239, 68, 68, 0.2)'
-                          }}
+                          className="rounded px-2 py-0.5 text-[9px] font-bold text-rose-400 border border-rose-500/20 bg-rose-500/10"
                         >
-                          Blocked
+                          BLOCKED
                         </span>
                       )
                     ) : (
-                      <span className="text-rmc-slate italic">Unknown</span>
+                      <span className="text-rmc-slate italic font-mono">UNKNOWN</span>
                     )}
                   </div>
 
                   {/* Event Detail if hovered */}
                   {hoveredEvent ? (
-                    <div className="mt-3.5 pt-3.5 border-t border-white/5">
-                      <div className="text-[10px] text-rmc-slate font-mono uppercase tracking-wider mb-2">
-                        Event Node
+                    <div className="mt-1 pt-2 border-t border-white/5 flex flex-col gap-2.5">
+                      <div className="text-[10px] text-rmc-slate font-mono uppercase tracking-wider pl-0.5">
+                        Selected Node
                       </div>
 
-                      <div className="mb-3">
-                        <div
-                          className="text-xs font-bold text-rmc-mist truncate"
-                          title={hoveredEvent.name}
-                        >
-                          {hoveredEvent.name}
+                      <div 
+                        className="flex flex-col gap-1.5 border-l-2 pl-3 py-1"
+                        style={{ 
+                          borderLeftColor: TRIGGER_COLORS[hoveredEvent.trigger] ?? '#e2e8f0' 
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span 
+                            className="text-xs font-bold text-rmc-mist truncate max-w-[130px]" 
+                            title={hoveredEvent.name}
+                          >
+                            {hoveredEvent.name}
+                          </span>
+                          <span className="text-[9px] font-mono text-rmc-slate">
+                            ID: #{hoveredEvent.id}
+                          </span>
                         </div>
-                        <div className="text-[10px] text-rmc-slate font-mono">
-                          ID: #{hoveredEvent.id}
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] text-rmc-slate">Trigger:</span>
+                          <span
+                            className="inline-block rounded px-1.5 py-0.5 text-[9px] font-bold border"
+                            style={{
+                              backgroundColor: (TRIGGER_COLORS[hoveredEvent.trigger] ?? '#e2e8f0') + '12',
+                              borderColor: (TRIGGER_COLORS[hoveredEvent.trigger] ?? '#e2e8f0') + '40',
+                              color: TRIGGER_COLORS[hoveredEvent.trigger] ?? '#e2e8f0'
+                            }}
+                          >
+                            {(TRIGGER_LABELS[hoveredEvent.trigger] ?? `Trigger ${hoveredEvent.trigger}`).toUpperCase()}
+                          </span>
                         </div>
-                      </div>
-
-                      {/* Trigger badge */}
-                      <div className="mb-3">
-                        <div className="text-[10px] text-rmc-slate mb-1">
-                          Trigger
-                        </div>
-                        <span
-                          className="inline-block rounded px-1.5 py-0.5 text-[10px] font-bold border"
-                          style={{
-                            backgroundColor:
-                              (TRIGGER_COLORS[hoveredEvent.trigger] ??
-                                '#e2e8f0') + '15',
-                            borderColor:
-                              TRIGGER_COLORS[hoveredEvent.trigger] ?? '#e2e8f0',
-                            color:
-                              TRIGGER_COLORS[hoveredEvent.trigger] ?? '#e2e8f0'
-                          }}
-                        >
-                          {TRIGGER_LABELS[hoveredEvent.trigger] ??
-                            `Trigger ${hoveredEvent.trigger}`}
-                        </span>
                       </div>
 
                       {/* Self Switches */}
-                      <div>
-                        <div className="text-[10px] text-rmc-slate mb-1.5">
+                      <div className="py-1 px-0.5 mt-1">
+                        <div className="text-[9px] text-rmc-slate mb-2 font-mono uppercase tracking-wider">
                           Self Switches
                         </div>
-                        <div className="flex">
+                        <div className="flex justify-between">
                           {(['A', 'B', 'C', 'D'] as const).map((k) => {
                             const active = hoveredEvent.selfSwitches[k];
                             return (
                               <span
                                 key={k}
-                                className="mr-1.5 inline-block rounded-full text-center font-bold border transition-colors duration-150"
+                                className="flex-1 max-w-[34px] text-center font-bold border rounded py-1 transition-all duration-150 text-[10px]"
                                 style={{
-                                  width: '18px',
-                                  height: '18px',
-                                  lineHeight: '16px',
-                                  fontSize: '9px',
                                   backgroundColor: active
-                                    ? 'rgba(255, 179, 92, 0.2)'
-                                    : 'rgba(255, 255, 255, 0.05)',
+                                    ? 'rgba(255, 179, 92, 0.15)'
+                                    : 'rgba(255, 255, 255, 0.02)',
                                   borderColor: active
-                                    ? '#ffb35c'
-                                    : 'rgba(255, 255, 255, 0.08)',
+                                    ? 'rgba(255, 179, 92, 0.5)'
+                                    : 'rgba(255, 255, 255, 0.06)',
                                   color: active
                                     ? '#ffb35c'
                                     : 'var(--color-rmc-slate)'
@@ -502,48 +503,44 @@ export function MinimapPanel() {
                     </div>
                   ) : (
                     <div
-                      className="mt-4 text-center py-6 text-rmc-slate text-[11px] border border-dashed rounded-lg px-2"
+                      className="mt-4 text-center py-8 text-rmc-slate text-[11px] border border-dashed rounded-lg px-3 leading-relaxed"
                       style={{ borderColor: 'rgba(255, 255, 255, 0.05)' }}
                     >
-                      Hover over a grid event indicator (diamond) to inspect
-                      details.
+                      Hover over a grid event indicator (diamond/circle) to inspect details.
                     </div>
                   )}
                 </div>
               ) : (
                 // Default Map Info
-                <div>
-                  <div className="flex items-center justify-between text-xs mb-2.5">
+                <div className="flex flex-col gap-1 font-mono text-xs">
+                  <div className="flex items-center justify-between py-1.5 px-0.5">
                     <span className="text-rmc-slate">Map ID:</span>
-                    <span className="text-rmc-mist font-semibold">
-                      #{data.mapId}
-                    </span>
+                    <span className="text-rmc-mist font-bold">#{data.mapId}</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs mb-2.5">
+                  <div className="flex items-center justify-between py-1.5 px-0.5">
                     <span className="text-rmc-slate">Dimensions:</span>
-                    <span className="text-rmc-mist font-semibold">
+                    <span className="text-rmc-mist font-bold">
                       {data.width} × {data.height}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs mb-2.5">
+                  <div className="flex items-center justify-between py-1.5 px-0.5">
                     <span className="text-rmc-slate">Total Events:</span>
-                    <span className="text-rmc-mist font-semibold">
+                    <span className="text-rmc-mist font-bold">
                       {data.events.length}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs mb-4">
+                  <div className="flex items-center justify-between py-1.5 px-0.5">
                     <span className="text-rmc-slate">Player Pos:</span>
-                    <span className="text-rmc-mist font-mono font-semibold">
+                    <span className="text-rmc-ember font-bold">
                       ({data.playerX}, {data.playerY})
                     </span>
                   </div>
 
                   <div
-                    className="text-center py-6 text-rmc-slate text-[11px] border border-dashed rounded-lg px-2"
+                    className="text-center py-6 text-rmc-slate text-[11px] border border-dashed rounded-lg px-3 mt-4 leading-relaxed font-sans"
                     style={{ borderColor: 'rgba(255, 255, 255, 0.05)' }}
                   >
-                    Hover map grid to inspect coordinate details and event
-                    self-switches.
+                    Hover map grid to inspect coordinate details and event self-switches.
                   </div>
                 </div>
               )}

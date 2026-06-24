@@ -90,6 +90,7 @@ function stopGameMouseEvent(event: MouseEvent) {
  */
 export function MinimapOverlay() {
   const enabled = useCheatStore((state) => state.minimapOverlayEnabled);
+  const gameReady = useCheatStore((state) => state.gameReady);
   const opacity = useCheatStore((state) => state.minimapOverlayOpacity);
   const x = useCheatStore((state) => state.minimapOverlayX);
   const y = useCheatStore((state) => state.minimapOverlayY);
@@ -100,7 +101,7 @@ export function MinimapOverlay() {
   const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !gameReady) return;
 
     const root = document.createElement('div');
     const canvas = document.createElement('canvas');
@@ -119,9 +120,11 @@ export function MinimapOverlay() {
       'cursor:grab',
       'border-radius:50%',
       'overflow:hidden',
-      'background:rgba(10,14,20,0.9)',
-      'border:2px solid rgba(255,179,92,0.75)',
-      'box-shadow:0 14px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)',
+      'background:rgba(8,11,16,0.75)',
+      'backdrop-filter:blur(8px)',
+      '-webkit-backdrop-filter:blur(8px)',
+      'border:2px solid rgba(255,179,92,0.6)',
+      'box-shadow:0 0 20px rgba(255,179,92,0.15), 0 14px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.08)',
       'user-select:none'
     ].join(';');
 
@@ -135,6 +138,7 @@ export function MinimapOverlay() {
     ].join(';');
 
     root.appendChild(canvas);
+
     document.body.appendChild(root);
 
     let currentX = position.x;
@@ -275,7 +279,7 @@ export function MinimapOverlay() {
       if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
       root.remove();
     };
-  }, [enabled, opacity, pushToast, ratioX, ratioY, setPosition, x, y]);
+  }, [enabled, gameReady, opacity, pushToast, ratioX, ratioY, setPosition, x, y]);
 
   return null;
 }

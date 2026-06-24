@@ -117,6 +117,7 @@ export type GameGlobalWindow = Window &
       reserveTransfer(mapId: number, x: number, y: number, direction?: number, fadeType?: number): void;
       executeEncounter?(): boolean;
       makeEncounterCount?(): void;
+      direction?(): number;
     };
     $gameMap?: {
       mapId(): number;

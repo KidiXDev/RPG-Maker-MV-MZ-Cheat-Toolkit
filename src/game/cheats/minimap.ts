@@ -21,6 +21,7 @@ export type MinimapData = {
   events: MinimapEventEntry[];
   playerX: number;
   playerY: number;
+  playerDir: number;
   displayX: number;
   displayY: number;
 };
@@ -110,11 +111,30 @@ export function getMinimapData(): MinimapData | null {
       }
     }
 
-    // --- Player position ---
+    // --- Player position & direction ---
     const playerX: number = w.$gamePlayer?.x ?? 0;
     const playerY: number = w.$gamePlayer?.y ?? 0;
+    let playerDir: number = 2;
+    try {
+      playerDir = w.$gamePlayer?.direction?.() ?? 2;
+    } catch {
+      /* ignore */
+    }
 
-    return { mapId, width, height, tileWidth, tileHeight, passable, events, playerX, playerY, displayX, displayY };
+    return {
+      mapId,
+      width,
+      height,
+      tileWidth,
+      tileHeight,
+      passable,
+      events,
+      playerX,
+      playerY,
+      playerDir,
+      displayX,
+      displayY
+    };
   } catch {
     // Outermost guard — never let an error escape to the game engine
     return null;
