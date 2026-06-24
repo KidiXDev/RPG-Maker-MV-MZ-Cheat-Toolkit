@@ -121,10 +121,6 @@ export function drawMinimap(
   drawTiles(ctx, data, viewport);
   drawHoveredTile(ctx, viewport, options.hoveredTile ?? null);
 
-  if (options.clipCircle) {
-    drawHUDCrosshair(ctx, canvas.width, canvas.height);
-  }
-
   drawEvents(ctx, data, viewport);
   drawPlayer(ctx, data, viewport);
 
@@ -133,40 +129,6 @@ export function drawMinimap(
   if (options.clipCircle) {
     drawCompassBezel(ctx, canvas.width, canvas.height);
   }
-}
-
-function drawHUDCrosshair(
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number
-) {
-  const cx = width / 2;
-  const cy = height / 2;
-  const radius = Math.min(width, height) / 2 - 12;
-
-  ctx.save();
-  ctx.strokeStyle = 'rgba(117, 214, 255, 0.15)'; // soft info blue
-  ctx.lineWidth = 0.8;
-  ctx.setLineDash([3, 4]); // Dashed lines
-
-  // Concentric range circles
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius * 0.4, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius * 0.75, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Crosshair lines
-  ctx.beginPath();
-  ctx.moveTo(cx - radius, cy);
-  ctx.lineTo(cx + radius, cy);
-  ctx.moveTo(cx, cy - radius);
-  ctx.lineTo(cx, cy + radius);
-  ctx.stroke();
-
-  ctx.restore();
 }
 
 function drawCompassBezel(
