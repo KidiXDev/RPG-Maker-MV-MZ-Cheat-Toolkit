@@ -1,6 +1,6 @@
+import { z } from 'zod';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { z } from 'zod';
 import { createCheatStorage } from '../game/storage.ts';
 import { generateId } from '../utils/id.ts';
 
@@ -19,7 +19,11 @@ export type PanelId =
   | 'minimap'
   | 'settings';
 
-export type HudPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+export type HudPosition =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
 
 // Full set of value fields the store holds. Cheat values (game speed, move
 // speed, no-clip, multipliers) are transient and reset every session.
@@ -42,6 +46,10 @@ type CheatValues = {
   warnOldNwjs: boolean;
   warnNoDevTools: boolean;
   espEnabled: boolean;
+  minimapOverlayEnabled: boolean;
+  minimapOverlayOpacity: number;
+  minimapOverlayX: number;
+  minimapOverlayY: number;
 };
 
 // Only these settings persist across sessions. Cheat toggles/values do not.
@@ -49,13 +57,19 @@ const persistedSchema = z.object({
   hideBadge: z.boolean().catch(false),
   badgeOpacity: z.number().min(0.1).max(1).catch(1),
   hudEnabled: z.boolean().catch(false),
-  hudPosition: z.enum(['top-left', 'top-right', 'bottom-left', 'bottom-right']).catch('top-left'),
+  hudPosition: z
+    .enum(['top-left', 'top-right', 'bottom-left', 'bottom-right'])
+    .catch('top-left'),
   hudShowFps: z.boolean().catch(true),
   hudShowMap: z.boolean().catch(true),
   hudShowCoords: z.boolean().catch(true),
   hudShowEvents: z.boolean().catch(true),
   warnOldNwjs: z.boolean().catch(true),
   warnNoDevTools: z.boolean().catch(true),
+  minimapOverlayEnabled: z.boolean().catch(false),
+  minimapOverlayOpacity: z.number().min(0.25).max(1).catch(0.85),
+  minimapOverlayX: z.number().min(0).catch(24),
+  minimapOverlayY: z.number().min(0).catch(96)
 });
 
 type CheatState = CheatValues & {
@@ -94,6 +108,10 @@ type CheatState = CheatValues & {
   setWarnOldNwjs(warn: boolean): void;
   setWarnNoDevTools(warn: boolean): void;
   setEspEnabled(enabled: boolean): void;
+  setMinimapOverlayEnabled(enabled: boolean): void;
+  setMinimapOverlayOpacity(opacity: number): void;
+  setMinimapOverlayPosition(position: { x: number; y: number }): void;
+  resetMinimapOverlayPosition(): void;
   requestConfirm(options: {
     title: string;
     message: string;
@@ -125,6 +143,10 @@ export const useCheatStore = create<CheatState>()(
       warnOldNwjs: true,
       warnNoDevTools: true,
       espEnabled: false,
+      minimapOverlayEnabled: false,
+      minimapOverlayOpacity: 0.85,
+      minimapOverlayX: 24,
+      minimapOverlayY: 96,
       isOpen: false,
       isIntroVisible: true,
       gameReady: false,
@@ -145,7 +167,8 @@ export const useCheatStore = create<CheatState>()(
       setHideBadge: (hide) => set({ hideBadge: hide }),
       setBadgeOpacity: (opacity) => set({ badgeOpacity: opacity }),
       setExpMultiplier: (multiplier) => set({ expMultiplier: multiplier }),
-      setDamageMultiplier: (multiplier) => set({ damageMultiplier: multiplier }),
+      setDamageMultiplier: (multiplier) =>
+        set({ damageMultiplier: multiplier }),
       setHudEnabled: (enabled) => set({ hudEnabled: enabled }),
       setHudPosition: (pos) => set({ hudPosition: pos }),
       setHudShowFps: (show) => set({ hudShowFps: show }),
@@ -155,7 +178,21 @@ export const useCheatStore = create<CheatState>()(
       setWarnOldNwjs: (warn) => set({ warnOldNwjs: warn }),
       setWarnNoDevTools: (warn) => set({ warnNoDevTools: warn }),
       setEspEnabled: (enabled) => set({ espEnabled: enabled }),
-      requestConfirm: ({ title, message, confirmLabel = 'Confirm', tone = 'info', onConfirm }) =>
+      setMinimapOverlayEnabled: (enabled) =>
+        set({ minimapOverlayEnabled: enabled }),
+      setMinimapOverlayOpacity: (opacity) =>
+        set({ minimapOverlayOpacity: opacity }),
+      setMinimapOverlayPosition: ({ x, y }) =>
+        set({ minimapOverlayX: x, minimapOverlayY: y }),
+      resetMinimapOverlayPosition: () =>
+        set({ minimapOverlayX: 24, minimapOverlayY: 96 }),
+      requestConfirm: ({
+        title,
+        message,
+        confirmLabel = 'Confirm',
+        tone = 'info',
+        onConfirm
+      }) =>
         set({
           confirmDialog: {
             title,
@@ -167,7 +204,10 @@ export const useCheatStore = create<CheatState>()(
         }),
       pushToast: (message, tone = 'info') =>
         set((state) => ({
-          toasts: [...state.toasts.slice(-3), { id: generateId(), message, tone }]
+          toasts: [
+            ...state.toasts.slice(-3),
+            { id: generateId(), message, tone }
+          ]
         })),
       dismissToast: (id) =>
         set((state) => ({

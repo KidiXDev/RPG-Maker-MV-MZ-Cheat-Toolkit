@@ -3,6 +3,7 @@ import { CheatModal } from './components/CheatModal.tsx';
 import { ConfirmDialog } from './components/ConfirmDialog.tsx';
 import { EspOverlay } from './components/EspOverlay.tsx';
 import { IntroOverlay } from './components/IntroOverlay.tsx';
+import { MinimapOverlay } from './components/MinimapOverlay.tsx';
 import { OverlayHud } from './components/OverlayHud.tsx';
 import { ToastViewport } from './components/Toast.tsx';
 import { showStartupWarnings } from './inject/startupWarnings.ts';
@@ -68,6 +69,7 @@ function App({ portalRoot }: AppProps) {
       {isOpen ? <CheatModal portalRoot={portalRoot} /> : null}
       {isIntroVisible ? <IntroOverlay /> : null}
       <EspOverlay />
+      <MinimapOverlay />
       <ConfirmDialog portalRoot={portalRoot} />
       <OverlayHud portalRoot={portalRoot} />
       <ToastViewport portalRoot={portalRoot} />
