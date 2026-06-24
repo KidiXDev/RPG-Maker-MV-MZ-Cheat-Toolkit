@@ -545,6 +545,11 @@ func stripLoader(content string) string {
 func injectLoader(content string, diagnostic bool) string {
 	content = stripLoader(content)
 
+	newline := "\n"
+	if strings.Contains(content, "\r\n") {
+		newline = "\r\n"
+	}
+
 	scriptSrc := "cheat/cheat.js"
 	diagAttr := ""
 	if diagnostic {
@@ -552,9 +557,16 @@ func injectLoader(content string, diagnostic bool) string {
 		diagAttr = ";s.setAttribute('data-rmc-diagnostic','1')"
 	}
 
-	loaderBlock := fmt.Sprintf("%s\n(function(){var s=document.createElement('script');s.src='%s';\ns.async=false%s;document.head.appendChild(s);})();\n%s\n", MarkerStart, scriptSrc, diagAttr, MarkerEnd)
+	loaderBlock := fmt.Sprintf("%s%s(function(){var s=document.createElement('script');s.src='%s';%ss.async=false%s;document.head.appendChild(s);})();%s%s%s",
+		MarkerStart, newline,
+		scriptSrc, newline,
+		diagAttr, newline,
+		MarkerEnd, newline)
 
-	lines := strings.Split(content, "\n")
+	// Normalize to \n for uniform line matching, then split
+	normalized := strings.ReplaceAll(content, "\r\n", "\n")
+	lines := strings.Split(normalized, "\n")
+
 	insertIndex := 0
 	for i, line := range lines {
 		trimmed := strings.TrimSpace(line)
@@ -567,12 +579,12 @@ func injectLoader(content string, diagnostic bool) string {
 
 	var result strings.Builder
 	for i, line := range lines {
-		if i == insertIndex {
-			result.WriteString(loaderBlock)
-		}
 		result.WriteString(line)
 		if i < len(lines)-1 {
-			result.WriteString("\n")
+			result.WriteString(newline)
+		}
+		if i == insertIndex {
+			result.WriteString(loaderBlock)
 		}
 	}
 	return result.String()

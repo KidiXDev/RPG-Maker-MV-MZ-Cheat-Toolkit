@@ -42,23 +42,43 @@ Here is a preview of the modernized cheat toolkit interface running inside RPG M
 
 ## 📥 How to Install
 
-You can easily install this cheat toolkit into any RPG Maker MV or MZ game using either of the methods below.
+You can easily install this cheat toolkit into any RPG Maker MV or MZ game using any of the methods below.
 
 ---
 
-### Option 1: Automated Installation (Recommended)
+### Option 1: Desktop CLI Tool (Recommended, No Node.js Required)
 
-This method automatically backs up your game entry file and copies the cheat loader bundle into your game.
+This method uses the standalone CLI tool which automatically backs up your game entry file, injects the loader, and copies files. It also tracks your installed games so you can update them all at once!
+
+#### Step 1: Get the Tool Files
+1. Go to the [Releases](https://github.com/KidiXDev/RPG-Maker-MV-MZ-Cheat-Toolkit/releases) page on GitHub.
+2. Download the `rpg-maker-cheat-toolkit-vx.x.x.zip` file under the latest release.
+3. Extract the ZIP file to a folder on your computer.
+
+#### Step 2: Run the CLI Tool
+1. Open the extracted folder.
+2. Run the interactive executable:
+   - **On Windows:** Double-click `rmc-cli-win64.exe`.
+   - **On Linux:** Open a terminal in the folder and run `./rmc-cli-linux-amd64`.
+3. Select **`[1] Install Cheat Toolkit`** from the menu.
+4. Copy the path to your target RPG Maker game folder (the directory containing the game executable and files like `package.json` or `www/`), paste it into the prompt, and press **Enter**.
+
+#### Step 3: Open in the Game
+1. Open and play your game.
+2. Press **`Ctrl + C`** on your keyboard (or click the floating **RMC** badge in the bottom-right corner of the screen) to open the cheat menu overlay!
+
+---
+
+### Option 2: Script-Based Installation (Requires Node.js)
+
+If you prefer using the Node.js script-based automated installer:
 
 #### Step 1: Install Node.js
 To run the automated installer script, you need Node.js installed on your computer:
 1. Download and install Node.js from the official website: [nodejs.org](https://nodejs.org/) (choose the Recommended/LTS version).
 
 #### Step 2: Get the Cheat Toolkit Files
-Download the latest pre-built package:
-1. Go to the [Releases](https://github.com/KidiXDev/RPG-Maker-MV-MZ-Cheat-Toolkit/releases) page on GitHub.
-2. Download the `rpg-maker-cheat-toolkit-vx.x.x.zip` file under the latest release.
-3. Extract the ZIP file to a folder on your computer.
+1. Download and extract the latest release ZIP file to a folder on your computer.
 
 *(Note: If you cloned the source code and want to compile the files yourself, please follow the instructions in the **Developer Guide** section below).*
 
@@ -70,17 +90,17 @@ Download the latest pre-built package:
      ```bash
      node scripts/install.mjs
      ```
-3. Copy the path to your target RPG Maker game folder (the folder containing the game executable and files like `package.json` or `www/`) and paste it into the prompt, then press **Enter**.
+3. Copy the path to your target RPG Maker game folder (containing the game executable and files like `package.json` or `www/`) and paste it into the prompt, then press **Enter**.
 
 #### Step 4: Open in the Game
 1. Open and play your game.
-2. Press **`Ctrl + C`** on your keyboard (or click the floating **RMC** badge in the bottom-right corner of the screen) to open the cheat menu overlay!
+2. Press **`Ctrl + C`** (or click the floating **RMC** badge) to open the cheat menu!
 
 ---
 
-### Option 2: Manual Installation
+### Option 3: Manual Installation
 
-If you prefer not to install Node.js or want to perform the steps manually, follow these instructions:
+If you prefer to perform the installation steps manually, follow these instructions:
 
 #### Step 1: Create the Cheat Directory
 1. Get the cheat toolkit files by downloading and extracting the release ZIP file.

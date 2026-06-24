@@ -37,10 +37,10 @@ jobs:
         run: |
           mkdir -p release
           cd scripts/cli
-          # Build Windows AMD64
-          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o ../../release/rmc-installer-win64.exe main.go
+          # Build Windows AMD64 (avoiding install/setup keywords to prevent UAC prompts)
+          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o ../../release/rmc-cli-win64.exe main.go
           # Build Linux AMD64
-          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o ../../release/rmc-installer-linux-amd64 main.go
+          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o ../../release/rmc-cli-linux-amd64 main.go
           cd ../..
 
       - name: Create Release Package
