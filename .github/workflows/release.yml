@@ -28,6 +28,24 @@ jobs:
       - name: Build Injectable Bundle
         run: bun run build:inject
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      - name: Build Go CLI Installers
+        run: |
+          mkdir -p release
+          cd scripts/cli
+          # Build Windows AMD64
+          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o ../../release/rmc-installer-win64.exe main.go
+          # Build macOS AMD64 & ARM64
+          GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -o ../../release/rmc-installer-mac-amd64 main.go
+          GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w" -o ../../release/rmc-installer-mac-arm64 main.go
+          # Build Linux AMD64
+          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o ../../release/rmc-installer-linux-amd64 main.go
+          cd ../..
+
       - name: Create Release Package
         run: |
           mkdir -p release/scripts
