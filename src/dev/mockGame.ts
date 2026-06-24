@@ -24,6 +24,19 @@ class GameSwitches {
   }
 }
 
+class GameSelfSwitches {
+  // Key is "mapId,eventId,letter" string
+  private values = new Map<string, boolean>();
+
+  value(key: [number, number, string]): boolean {
+    return this.values.get(key.join(',')) ?? false;
+  }
+
+  setValue(key: [number, number, string], val: boolean) {
+    this.values.set(key.join(','), val);
+  }
+}
+
 function createActor(id: number, name: string): Actor {
   const baseParams = [620, 140, 72, 58, 64, 51, 88, 44];
   const params = [...baseParams];
@@ -150,7 +163,74 @@ export function setupMockGame() {
   gameWindow.$gameMap = {
     mapId: () => 1,
     displayName: () => 'Harbor of Ash',
-    events: () => []
+    width: () => 20,
+    height: () => 15,
+    tileWidth: () => 48,
+    tileHeight: () => 48,
+    _displayX: 0,
+    _displayY: 0,
+    isPassable: (x: number, y: number) => {
+      // Simple mock: border tiles are blocked, inside is passable
+      return x > 0 && y > 0 && x < 19 && y < 14;
+    },
+    events: () => [
+      {
+        eventId: () => 1,
+        event: () => ({ id: 1, name: 'Town Guard', x: 5, y: 3, pages: [{ trigger: 0 }] }),
+        start: () => {},
+        erase: () => {},
+        isStarting: () => false,
+        isRunning: () => false,
+        pageIndex: () => 0,
+        page: () => ({ trigger: 0 }),
+        x: 5,
+        y: 3,
+        _trigger: 0,
+        _erased: false,
+      },
+      {
+        eventId: () => 2,
+        event: () => ({ id: 2, name: 'Treasure Chest', x: 12, y: 7, pages: [{ trigger: 0 }] }),
+        start: () => {},
+        erase: () => {},
+        isStarting: () => false,
+        isRunning: () => false,
+        pageIndex: () => 0,
+        page: () => ({ trigger: 0 }),
+        x: 12,
+        y: 7,
+        _trigger: 0,
+        _erased: false,
+      },
+      {
+        eventId: () => 3,
+        event: () => ({ id: 3, name: 'Door Trigger', x: 9, y: 1, pages: [{ trigger: 1 }] }),
+        start: () => {},
+        erase: () => {},
+        isStarting: () => false,
+        isRunning: () => false,
+        pageIndex: () => 0,
+        page: () => ({ trigger: 1 }),
+        x: 9,
+        y: 1,
+        _trigger: 1,
+        _erased: false,
+      },
+      {
+        eventId: () => 4,
+        event: () => ({ id: 4, name: 'Autorun Intro', x: 3, y: 10, pages: [{ trigger: 3 }] }),
+        start: () => {},
+        erase: () => {},
+        isStarting: () => false,
+        isRunning: () => true,
+        pageIndex: () => 0,
+        page: () => ({ trigger: 3 }),
+        x: 3,
+        y: 10,
+        _trigger: 3,
+        _erased: false,
+      },
+    ],
   };
   gameWindow.$gameParty = {
     gold: () => 740,
@@ -204,6 +284,7 @@ export function setupMockGame() {
     saveGame: () => true,
     loadGame: () => true
   };
+  gameWindow.$gameSelfSwitches = new GameSelfSwitches();
   gameWindow.TouchInput = {};
   gameWindow.Window_Message = {
     prototype: {

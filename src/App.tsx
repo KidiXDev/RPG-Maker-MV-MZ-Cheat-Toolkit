@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheatModal } from './components/CheatModal.tsx';
 import { ConfirmDialog } from './components/ConfirmDialog.tsx';
+import { EspOverlay } from './components/EspOverlay.tsx';
 import { IntroOverlay } from './components/IntroOverlay.tsx';
 import { OverlayHud } from './components/OverlayHud.tsx';
 import { ToastViewport } from './components/Toast.tsx';
@@ -66,6 +67,7 @@ function App({ portalRoot }: AppProps) {
       ) : null}
       {isOpen ? <CheatModal portalRoot={portalRoot} /> : null}
       {isIntroVisible ? <IntroOverlay /> : null}
+      <EspOverlay />
       <ConfirmDialog portalRoot={portalRoot} />
       <OverlayHud portalRoot={portalRoot} />
       <ToastViewport portalRoot={portalRoot} />

@@ -123,6 +123,17 @@ export type GameGlobalWindow = Window &
       displayName?(): string;
       events(): GameEvent[];
       _events?: Array<GameEvent | null>;
+      width?(): number;
+      height?(): number;
+      isPassable?(x: number, y: number, d: number): boolean;
+      tileWidth?(): number;
+      tileHeight?(): number;
+      _displayX?: number;
+      _displayY?: number;
+    };
+    $gameSelfSwitches?: {
+      value(key: [number, number, string]): boolean;
+      setValue(key: [number, number, string], value: boolean): void;
     };
     $gameParty?: {
       _gold?: number;

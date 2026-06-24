@@ -16,6 +16,7 @@ export type PanelId =
   | 'shortcuts'
   | 'trainer'
   | 'events'
+  | 'minimap'
   | 'settings';
 
 export type HudPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -40,6 +41,7 @@ type CheatValues = {
   hudShowEvents: boolean;
   warnOldNwjs: boolean;
   warnNoDevTools: boolean;
+  espEnabled: boolean;
 };
 
 // Only these settings persist across sessions. Cheat toggles/values do not.
@@ -91,6 +93,7 @@ type CheatState = CheatValues & {
   setHudShowEvents(show: boolean): void;
   setWarnOldNwjs(warn: boolean): void;
   setWarnNoDevTools(warn: boolean): void;
+  setEspEnabled(enabled: boolean): void;
   requestConfirm(options: {
     title: string;
     message: string;
@@ -121,6 +124,7 @@ export const useCheatStore = create<CheatState>()(
       hudShowEvents: true,
       warnOldNwjs: true,
       warnNoDevTools: true,
+      espEnabled: false,
       isOpen: false,
       isIntroVisible: true,
       gameReady: false,
@@ -150,6 +154,7 @@ export const useCheatStore = create<CheatState>()(
       setHudShowEvents: (show) => set({ hudShowEvents: show }),
       setWarnOldNwjs: (warn) => set({ warnOldNwjs: warn }),
       setWarnNoDevTools: (warn) => set({ warnNoDevTools: warn }),
+      setEspEnabled: (enabled) => set({ espEnabled: enabled }),
       requestConfirm: ({ title, message, confirmLabel = 'Confirm', tone = 'info', onConfirm }) =>
         set({
           confirmDialog: {

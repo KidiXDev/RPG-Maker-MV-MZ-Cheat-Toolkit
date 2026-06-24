@@ -4,6 +4,7 @@ import { EventsPanel } from '../panels/EventsPanel.tsx';
 import { GeneralPanel } from '../panels/GeneralPanel.tsx';
 import { InventoryPanel } from '../panels/InventoryPanel.tsx';
 import { LocationPanel } from '../panels/LocationPanel.tsx';
+import { MinimapPanel } from '../panels/MinimapPanel.tsx';
 import { SettingsPanel } from '../panels/SettingsPanel.tsx';
 import { ShortcutsPanel } from '../panels/ShortcutsPanel.tsx';
 import { StatsPanel } from '../panels/StatsPanel.tsx';
@@ -27,6 +28,7 @@ const panels: Array<{ id: PanelId; label: string }> = [
   { id: 'switches', label: 'Switches' },
   { id: 'location', label: 'Locations' },
   { id: 'teleport', label: 'Teleport' },
+  { id: 'minimap', label: 'Minimap' },
   { id: 'events', label: 'Events' },
   { id: 'shortcuts', label: 'Shortcuts' },
   { id: 'settings', label: 'Settings' }
@@ -134,6 +136,10 @@ function PanelSwitch({
 
   if (activePanel === 'teleport') {
     return <TeleportPanel />;
+  }
+
+  if (activePanel === 'minimap') {
+    return <MinimapPanel />;
   }
 
   if (activePanel === 'events') {
