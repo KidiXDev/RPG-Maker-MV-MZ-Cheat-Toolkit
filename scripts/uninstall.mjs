@@ -78,7 +78,15 @@ function stripLoader(content) {
   return content.slice(0, start) + content.slice(blockEnd + (nextNewline?.[0].length ?? 0));
 }
 
-async function main() {
+async function maybePause() {
+  const isInteractive = process.stdout.isTTY && !process.argv.slice(2).some(arg => arg.startsWith('-'));
+  if (isInteractive) {
+    const rl = readline.createInterface({ input, output });
+    await rl.question('\nPress Enter to exit...', rl.close.bind(rl));
+  }
+}
+
+async function run() {
   const args = parseArgs(process.argv.slice(2));
 
   if (args.help) {
@@ -86,35 +94,58 @@ async function main() {
     return;
   }
 
+  console.log('\nRPG Maker Cheat Toolkit Uninstaller');
+  console.log('===================================\n');
+
+  console.log('[INFO] Detecting game engine...');
   const gameDir = path.resolve(args.game || (await promptForGameDir()).trim());
   const game = detectGame(gameDir);
   const backupPath = `${game.mainJs}.rmc-backup`;
 
-  console.log(`Detected RPG Maker ${game.engine}`);
+  console.log(`[OK] Detected RPG Maker ${game.engine}`);
+  console.log(`     Game entry file: ${game.mainJs}`);
 
+  console.log('\n[INFO] Restoring main.js entry file...');
   if (fs.existsSync(backupPath)) {
     fs.copyFileSync(backupPath, game.mainJs);
-    console.log(`Restored ${game.mainJs} from backup.`);
+    console.log(`[OK] Restored ${game.mainJs} from backup.`);
   } else {
     const current = fs.readFileSync(game.mainJs, 'utf8');
     fs.writeFileSync(game.mainJs, stripLoader(current), 'utf8');
-    console.log('Backup missing; stripped marked loader block instead.');
+    console.log('[INFO] Backup file missing; stripped injected loader script instead.');
   }
 
+  console.log('\n[INFO] Cleaning up bundle directories...');
   if (fs.existsSync(game.cheatDir)) {
     fs.rmSync(game.cheatDir, { recursive: true, force: true });
-    console.log(`Removed ${game.cheatDir}`);
+    console.log(`[OK] Removed cheat folder: ${game.cheatDir}`);
+  } else {
+    console.log('[OK] Cheat folder already removed or not found.');
   }
 
-  if (args.purge && fs.existsSync(game.settingsDir)) {
-    fs.rmSync(game.settingsDir, { recursive: true, force: true });
-    console.log(`Removed ${game.settingsDir}`);
+  if (args.purge) {
+    if (fs.existsSync(game.settingsDir)) {
+      fs.rmSync(game.settingsDir, { recursive: true, force: true });
+      console.log(`[OK] Purged settings folder: ${game.settingsDir}`);
+    } else {
+      console.log('[OK] Settings folder already purged or not found.');
+    }
+  } else if (fs.existsSync(game.settingsDir)) {
+    console.log('[INFO] Note: Saved configurations left intact. Run with --purge to remove them.');
   }
 
-  console.log('Uninstall complete.');
+  console.log('\n[SUCCESS] Uninstallation successful!');
 }
 
-main().catch((error) => {
-  console.error(`Uninstall failed: ${error.message}`);
-  process.exitCode = 1;
-});
+async function main() {
+  try {
+    await run();
+  } catch (error) {
+    console.error(`\n[ERROR] Uninstallation failed: ${error.message}`);
+    process.exitCode = 1;
+  } finally {
+    await maybePause();
+  }
+}
+
+main();

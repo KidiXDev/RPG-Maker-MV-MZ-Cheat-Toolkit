@@ -116,29 +116,6 @@ function injectLoader(content, options = {}) {
   return lines.join(newline);
 }
 
-function printDiff(before, after, filePath) {
-  const beforeLines = before.split(/\r?\n/);
-  const afterLines = after.split(/\r?\n/);
-  const max = Math.max(beforeLines.length, afterLines.length);
-
-  console.log(`--- ${filePath}.rmc-backup`);
-  console.log(`+++ ${filePath}`);
-
-  for (let index = 0; index < max; index += 1) {
-    if (beforeLines[index] === afterLines[index]) {
-      continue;
-    }
-
-    if (beforeLines[index] !== undefined) {
-      console.log(`-${beforeLines[index]}`);
-    }
-
-    if (afterLines[index] !== undefined) {
-      console.log(`+${afterLines[index]}`);
-    }
-  }
-}
-
 function copyBundle(cheatDir, options = {}) {
   const distDir = path.resolve(__dirname, '..', 'dist');
   const requiredFiles = ['cheat.js'];
@@ -184,7 +161,16 @@ function copyBundle(cheatDir, options = {}) {
   }
 }
 
-async function main() {
+async function maybePause() {
+  const isInteractive = process.stdout.isTTY && !process.argv.slice(2).some(arg => arg.startsWith('-'));
+  if (isInteractive) {
+    const rl = readline.createInterface({ input, output });
+    await rl.question('\nPress Enter to exit...');
+    rl.close();
+  }
+}
+
+async function run() {
   const args = parseArgs(process.argv.slice(2));
 
   if (args.help) {
@@ -192,49 +178,67 @@ async function main() {
     return;
   }
 
+  console.log('\nRPG Maker Cheat Toolkit Installer');
+  console.log('=================================\n');
+
+  console.log('[INFO] Detecting game engine...');
   const gameDir = path.resolve(args.game || (await promptForGameDir()).trim());
   const game = detectGame(gameDir);
   const backupPath = `${game.mainJs}.rmc-backup`;
 
-  console.log(`Detected RPG Maker ${game.engine}`);
-  console.log(`main.js: ${game.mainJs}`);
-  console.log(`diagnostic logging: ${args.diagnostic ? 'enabled' : 'disabled'}`);
-
-  if (!fs.existsSync(backupPath)) {
-    fs.copyFileSync(game.mainJs, backupPath);
-    console.log(`Created backup: ${backupPath}`);
-  } else {
-    console.log(`Using existing backup: ${backupPath}`);
+  console.log(`[OK] Detected RPG Maker ${game.engine}`);
+  console.log(`     Game entry file: ${game.mainJs}`);
+  if (args.diagnostic) {
+    console.log('     Diagnostic logging: enabled');
   }
 
+  console.log('\n[INFO] Checking backup...');
+  if (!fs.existsSync(backupPath)) {
+    fs.copyFileSync(game.mainJs, backupPath);
+    console.log(`[OK] Created entry backup: ${backupPath}`);
+  } else {
+    console.log(`[OK] Found existing entry backup: ${backupPath}`);
+  }
+
+  console.log('\n[INFO] Injecting cheat loader into main.js...');
   const backup = fs.readFileSync(backupPath, 'utf8');
   const current = fs.readFileSync(game.mainJs, 'utf8');
   const injected = injectLoader(current, { diagnostic: args.diagnostic });
 
   if (injected !== current) {
     fs.writeFileSync(game.mainJs, injected, 'utf8');
+    console.log('[OK] Loader code injected successfully.');
   } else {
-    console.log('Loader already up to date; injection skipped.');
+    console.log('[INFO] Loader is already up to date; injection skipped.');
   }
 
   const modified = fs.readFileSync(game.mainJs, 'utf8');
 
   if (modified !== injectLoader(backup, { diagnostic: args.diagnostic })) {
     fs.copyFileSync(backupPath, game.mainJs);
-    throw new Error('main.js changed outside the loader block. Restored backup and aborted.');
+    throw new Error('main.js was modified outside the loader block. Restored original backup and aborted.');
   }
 
-  printDiff(backup, modified, game.mainJs);
+  console.log('\n[INFO] Copying toolkit bundle files...');
   copyBundle(game.cheatDir, { diagnostic: args.diagnostic });
-
-  console.log(`Copied bundle to ${game.cheatDir}`);
+  console.log(`[OK] Copied bundle to: ${game.cheatDir}`);
   if (args.diagnostic) {
-    console.log(`Diagnostic log: ${path.join(game.cheatDir, 'rmc-diagnostic.log')}`);
+    console.log(`[OK] Diagnostic log path: ${path.join(game.cheatDir, 'rmc-diagnostic.log')}`);
   }
-  console.log('Install complete. Press Ctrl+C in game to open the overlay.');
+
+  console.log('\n[SUCCESS] Installation successful!');
+  console.log('Press Ctrl + C (or click the floating RMC badge) in the game to open the overlay.');
 }
 
-main().catch((error) => {
-  console.error(`Install failed: ${error.message}`);
-  process.exitCode = 1;
-});
+async function main() {
+  try {
+    await run();
+  } catch (error) {
+    console.error(`\n[ERROR] Installation failed: ${error.message}`);
+    process.exitCode = 1;
+  } finally {
+    await maybePause();
+  }
+}
+
+main();
