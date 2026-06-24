@@ -16,7 +16,7 @@ export const TRIGGER_LABELS: Record<number, string> = {
   4: 'Parallel'
 };
 
-const MAX_CANVAS_DIM = 480;
+const MAX_CANVAS_DIM = 320;
 
 type DrawMinimapOptions = {
   hoveredTile?: { x: number; y: number } | null;
