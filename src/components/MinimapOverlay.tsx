@@ -13,16 +13,49 @@ const EDGE_PADDING = 10;
 const DRAG_CLICK_THRESHOLD = 5;
 const MINIMAP_CELL_SIZE = 8;
 
-function clampOverlayPosition(x: number, y: number) {
+function getPositionBounds() {
   return {
-    x: Math.max(
-      EDGE_PADDING,
-      Math.min(x, window.innerWidth - OVERLAY_SIZE - EDGE_PADDING)
-    ),
-    y: Math.max(
-      EDGE_PADDING,
-      Math.min(y, window.innerHeight - OVERLAY_SIZE - EDGE_PADDING)
-    )
+    maxX: Math.max(EDGE_PADDING, window.innerWidth - OVERLAY_SIZE - EDGE_PADDING),
+    maxY: Math.max(EDGE_PADDING, window.innerHeight - OVERLAY_SIZE - EDGE_PADDING)
+  };
+}
+
+function clampOverlayPosition(x: number, y: number) {
+  const bounds = getPositionBounds();
+
+  return {
+    x: Math.max(EDGE_PADDING, Math.min(x, bounds.maxX)),
+    y: Math.max(EDGE_PADDING, Math.min(y, bounds.maxY))
+  };
+}
+
+function getOverlayPositionFromStore(
+  x: number,
+  y: number,
+  ratioX: number | null,
+  ratioY: number | null
+) {
+  const bounds = getPositionBounds();
+  const restoredX =
+    ratioX === null ? x : EDGE_PADDING + ratioX * (bounds.maxX - EDGE_PADDING);
+  const restoredY =
+    ratioY === null ? y : EDGE_PADDING + ratioY * (bounds.maxY - EDGE_PADDING);
+
+  return clampOverlayPosition(restoredX, restoredY);
+}
+
+function getOverlayPositionRatios(x: number, y: number) {
+  const bounds = getPositionBounds();
+
+  return {
+    ratioX:
+      bounds.maxX === EDGE_PADDING
+        ? 0
+        : (x - EDGE_PADDING) / (bounds.maxX - EDGE_PADDING),
+    ratioY:
+      bounds.maxY === EDGE_PADDING
+        ? 0
+        : (y - EDGE_PADDING) / (bounds.maxY - EDGE_PADDING)
   };
 }
 
@@ -60,6 +93,8 @@ export function MinimapOverlay() {
   const opacity = useCheatStore((state) => state.minimapOverlayOpacity);
   const x = useCheatStore((state) => state.minimapOverlayX);
   const y = useCheatStore((state) => state.minimapOverlayY);
+  const ratioX = useCheatStore((state) => state.minimapOverlayRatioX);
+  const ratioY = useCheatStore((state) => state.minimapOverlayRatioY);
   const setPosition = useCheatStore((state) => state.setMinimapOverlayPosition);
   const pushToast = useCheatStore((state) => state.pushToast);
   const rafRef = useRef<number | undefined>(undefined);
@@ -69,7 +104,7 @@ export function MinimapOverlay() {
 
     const root = document.createElement('div');
     const canvas = document.createElement('canvas');
-    const position = clampOverlayPosition(x, y);
+    const position = getOverlayPositionFromStore(x, y, ratioX, ratioY);
 
     root.id = 'rmc-minimap-overlay';
     root.style.cssText = [
@@ -104,6 +139,7 @@ export function MinimapOverlay() {
 
     let currentX = position.x;
     let currentY = position.y;
+    let currentRatios = getOverlayPositionRatios(currentX, currentY);
     let isDragging = false;
     let dragDistance = 0;
     let dragStartX = 0;
@@ -118,6 +154,16 @@ export function MinimapOverlay() {
       currentY = clamped.y;
       root.style.left = `${currentX}px`;
       root.style.top = `${currentY}px`;
+    }
+
+    function persistCurrentPosition() {
+      currentRatios = getOverlayPositionRatios(currentX, currentY);
+      setPosition({
+        x: currentX,
+        y: currentY,
+        ratioX: currentRatios.ratioX,
+        ratioY: currentRatios.ratioY
+      });
     }
 
     function draw() {
@@ -147,8 +193,12 @@ export function MinimapOverlay() {
     }
 
     function handleResize() {
-      moveRoot(currentX, currentY);
-      setPosition({ x: currentX, y: currentY });
+      const bounds = getPositionBounds();
+      moveRoot(
+        EDGE_PADDING + currentRatios.ratioX * (bounds.maxX - EDGE_PADDING),
+        EDGE_PADDING + currentRatios.ratioY * (bounds.maxY - EDGE_PADDING)
+      );
+      persistCurrentPosition();
     }
 
     function handleMouseMove(event: MouseEvent) {
@@ -165,7 +215,7 @@ export function MinimapOverlay() {
       stopGameMouseEvent(event);
       isDragging = false;
       root.style.cursor = 'grab';
-      setPosition({ x: currentX, y: currentY });
+      persistCurrentPosition();
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     }
@@ -225,7 +275,7 @@ export function MinimapOverlay() {
       if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
       root.remove();
     };
-  }, [enabled, opacity, pushToast, setPosition, x, y]);
+  }, [enabled, opacity, pushToast, ratioX, ratioY, setPosition, x, y]);
 
   return null;
 }

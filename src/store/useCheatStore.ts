@@ -50,6 +50,8 @@ type CheatValues = {
   minimapOverlayOpacity: number;
   minimapOverlayX: number;
   minimapOverlayY: number;
+  minimapOverlayRatioX: number | null;
+  minimapOverlayRatioY: number | null;
 };
 
 // Only these settings persist across sessions. Cheat toggles/values do not.
@@ -69,7 +71,9 @@ const persistedSchema = z.object({
   minimapOverlayEnabled: z.boolean().catch(false),
   minimapOverlayOpacity: z.number().min(0.25).max(1).catch(0.85),
   minimapOverlayX: z.number().min(0).catch(24),
-  minimapOverlayY: z.number().min(0).catch(96)
+  minimapOverlayY: z.number().min(0).catch(96),
+  minimapOverlayRatioX: z.number().min(0).max(1).nullable().catch(null),
+  minimapOverlayRatioY: z.number().min(0).max(1).nullable().catch(null)
 });
 
 type CheatState = CheatValues & {
@@ -110,7 +114,12 @@ type CheatState = CheatValues & {
   setEspEnabled(enabled: boolean): void;
   setMinimapOverlayEnabled(enabled: boolean): void;
   setMinimapOverlayOpacity(opacity: number): void;
-  setMinimapOverlayPosition(position: { x: number; y: number }): void;
+  setMinimapOverlayPosition(position: {
+    x: number;
+    y: number;
+    ratioX: number;
+    ratioY: number;
+  }): void;
   resetMinimapOverlayPosition(): void;
   requestConfirm(options: {
     title: string;
@@ -147,6 +156,8 @@ export const useCheatStore = create<CheatState>()(
       minimapOverlayOpacity: 0.85,
       minimapOverlayX: 24,
       minimapOverlayY: 96,
+      minimapOverlayRatioX: null,
+      minimapOverlayRatioY: null,
       isOpen: false,
       isIntroVisible: true,
       gameReady: false,
@@ -182,10 +193,20 @@ export const useCheatStore = create<CheatState>()(
         set({ minimapOverlayEnabled: enabled }),
       setMinimapOverlayOpacity: (opacity) =>
         set({ minimapOverlayOpacity: opacity }),
-      setMinimapOverlayPosition: ({ x, y }) =>
-        set({ minimapOverlayX: x, minimapOverlayY: y }),
+      setMinimapOverlayPosition: ({ x, y, ratioX, ratioY }) =>
+        set({
+          minimapOverlayX: x,
+          minimapOverlayY: y,
+          minimapOverlayRatioX: ratioX,
+          minimapOverlayRatioY: ratioY
+        }),
       resetMinimapOverlayPosition: () =>
-        set({ minimapOverlayX: 24, minimapOverlayY: 96 }),
+        set({
+          minimapOverlayX: 24,
+          minimapOverlayY: 96,
+          minimapOverlayRatioX: null,
+          minimapOverlayRatioY: null
+        }),
       requestConfirm: ({
         title,
         message,
