@@ -2,6 +2,12 @@
 
 A modern, high-performance, and feature-rich injectable cheat overlay for RPG Maker MV and MZ games. This toolkit is a complete rewrite in **React 19**, **TypeScript**, and **Tailwind CSS 4**, running directly inside the game's NW.js runtime to read and mutate live game states (`$game*` globals).
 
+[![Badge](https://img.shields.io/badge/RPG%20Maker-VX%20Ace-FF0000.svg)](https://github.com/KidiXDev/RPG-Maker-ACE-Cheat-Toolkit)
+[![Badge](https://img.shields.io/badge/RPG%20Maker-MV/MZ-4A90E2.svg)](https://github.com/KidiXDev/RPG-Maker-MV-MZ-Cheat-Toolkit)
+
+> **NOTE**
+> If you are looking for RPG Maker VX Ace support, check out the [RPG Maker VX Ace Cheat Toolkit](https://github.com/KidiXDev/RPG-Maker-ACE-Cheat-Toolkit).
+
 ## Overview
 
 This project is a modernized, from-scratch rewrite based on the logic and features of the legacy plugins:
