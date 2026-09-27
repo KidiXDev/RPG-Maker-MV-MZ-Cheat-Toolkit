@@ -126,7 +126,12 @@ let delayedRunCall: (() => void) | null = null;
 
 export function delaySceneManagerRun() {
   const runtime = gameWindow();
-  if (!runtime.SceneManager || !runtime.SceneManager.run) {
+  if (!runtime.SceneManager) {
+    window.addEventListener('load', delaySceneManagerRun, { once: true });
+    return;
+  }
+
+  if (!runtime.SceneManager.run) {
     return;
   }
 

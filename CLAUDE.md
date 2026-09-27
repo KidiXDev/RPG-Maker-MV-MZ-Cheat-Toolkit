@@ -47,7 +47,7 @@ All RPG Maker globals are accessed through `gameWindow()` (`src/game/types.ts`),
 Each file encapsulates one cheat domain. They hold module-level state (multiplier values, patch flags) and expose getter/setter functions:
 
 - **`general.ts`** — gold, move speed, no-clip, current map name
-- **`gameSpeed.ts`** — game speed multiplier (all scenes vs battle-only), patches `SceneManager._deltaTime`
+- **`gameSpeed.ts`** — game speed multiplier (all scenes vs battle-only), sets `SceneManager._deltaTime` (MV) and wraps `SceneManager.determineRepeatNumber` (MZ)
 - **`battle.ts`** — party/enemy HP/MP/TP manipulation, encounter control, battle result forcing
 - **`stats.ts`** — per-actor level/EXP/params, god mode (interval-based HP/MP/TP refill)
 - **`inventory.ts`** — item/weapon/armor quantity read/write

@@ -37,8 +37,9 @@ export function setRandomEncountersEnabled(enabled: boolean) {
 export function forceEncounter() {
   const player = gameWindow().$gamePlayer;
 
-  player?.makeEncounterCount?.();
-  return player?.executeEncounter?.() ?? false;
+  if (player) {
+    player._encounterCount = 0;
+  }
 }
 
 export function recoverParty() {

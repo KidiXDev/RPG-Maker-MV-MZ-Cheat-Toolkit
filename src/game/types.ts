@@ -111,12 +111,10 @@ export type GameGlobalWindow = Window &
       _moveSpeed?: number;
       _through?: boolean;
       _reservedTransfer?: { mapId: number; x: number; y: number };
-      _encounterCountMade?: boolean;
+      _encounterCount?: number;
       setMoveSpeed(speed: number): void;
       setThrough(value: boolean): void;
       reserveTransfer(mapId: number, x: number, y: number, direction?: number, fadeType?: number): void;
-      executeEncounter?(): boolean;
-      makeEncounterCount?(): void;
       direction?(): number;
     };
     $gameMap?: {
@@ -157,6 +155,9 @@ export type GameGlobalWindow = Window &
       disableEncounter?(): void;
       enableEncounter?(): void;
       isEncounterEnabled?(): boolean;
+      setSavefileId?(savefileId: number): void;
+      onBeforeSave?(): void;
+      onAfterLoad?(): void;
     };
     $gameTroop?: {
       members(): Enemy[];
@@ -172,8 +173,8 @@ export type GameGlobalWindow = Window &
       abort(): void;
     };
     DataManager?: {
-      saveGame(savefileId: number): boolean | Promise<boolean>;
-      loadGame(savefileId: number): boolean | Promise<boolean>;
+      saveGame(savefileId: number): boolean | Promise<number>;
+      loadGame(savefileId: number): boolean | Promise<number>;
     };
     SceneManager?: {
       _scene?: object;
@@ -181,6 +182,7 @@ export type GameGlobalWindow = Window &
       push(scene: SceneConstructor): void;
       reloadGame?(): void;
       _deltaTime?: number;
+      determineRepeatNumber?(deltaTime: number): number;
       _reloaded?: boolean;
       run?(sceneClass: SceneConstructor): void;
     };
@@ -191,7 +193,10 @@ export type GameGlobalWindow = Window &
     };
     Scene_Title?: SceneConstructor;
     Scene_Save?: SceneConstructor;
-    Scene_Load?: SceneConstructor;
+    Scene_Load?: SceneConstructor & {
+      prototype: { reloadMapIfUpdated?(): void };
+    };
+    Scene_Map?: SceneConstructor;
     Window_Message?: {
       prototype: Record<string, unknown>;
     };

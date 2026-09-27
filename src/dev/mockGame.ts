@@ -153,12 +153,7 @@ export function setupMockGame() {
       this.x = x;
       this.y = y;
     },
-    executeEncounter() {
-      return true;
-    },
-    makeEncounterCount() {
-      this._encounterCountMade = true;
-    }
+    _encounterCount: 20
   };
   gameWindow.$gameMap = {
     mapId: () => 1,
@@ -288,10 +283,7 @@ export function setupMockGame() {
   gameWindow.TouchInput = {};
   gameWindow.Window_Message = {
     prototype: {
-      updateShowFast() {
-        return false;
-      },
-      updateInput() {
+      isTriggered() {
         return false;
       }
     }

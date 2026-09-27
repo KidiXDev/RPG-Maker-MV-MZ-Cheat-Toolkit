@@ -46,8 +46,7 @@ export function patchMessageSkip() {
   }
 
   const runtime = gameWindow();
-  patchMethod(runtime.Window_Message?.prototype, 'updateShowFast', () => skipEnabled || undefined);
-  patchMethod(runtime.Window_Message?.prototype, 'updateInput', () => skipEnabled || undefined);
+  patchMethod(runtime.Window_Message?.prototype, 'isTriggered', () => skipEnabled || undefined);
   patchMethod(runtime.Window_ScrollText?.prototype, 'scrollSpeed', (originalValue) =>
     skipEnabled ? Math.max(Number(originalValue) || 1, 12) : undefined
   );

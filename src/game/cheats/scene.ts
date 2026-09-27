@@ -21,12 +21,32 @@ export function reloadGame() {
   gameWindow().SceneManager?.reloadGame?.();
 }
 
-export function quickSave(slot = 1) {
-  return gameWindow().DataManager?.saveGame(slot);
+function isStorageSuccess(result: unknown) {
+  return result === true || result === 0;
 }
 
-export function quickLoad(slot = 1) {
-  return gameWindow().DataManager?.loadGame(slot);
+export async function quickSave(slot = 1) {
+  const runtime = gameWindow();
+  runtime.$gameSystem?.setSavefileId?.(slot);
+  runtime.$gameSystem?.onBeforeSave?.();
+  return isStorageSuccess(await runtime.DataManager?.saveGame(slot));
+}
+
+export async function quickLoad(slot = 1) {
+  const runtime = gameWindow();
+
+  if (!isStorageSuccess(await runtime.DataManager?.loadGame(slot))) {
+    return false;
+  }
+
+  runtime.$gameSystem?.onAfterLoad?.();
+  runtime.Scene_Load?.prototype.reloadMapIfUpdated?.();
+
+  if (runtime.Scene_Map) {
+    runtime.SceneManager?.goto(runtime.Scene_Map);
+  }
+
+  return true;
 }
 
 export function openDevTools() {
