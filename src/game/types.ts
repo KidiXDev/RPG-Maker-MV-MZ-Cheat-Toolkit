@@ -165,6 +165,7 @@ export type GameGlobalWindow = Window &
       actor(actorId: number): Actor | null;
     };
     BattleManager?: {
+      _escapeRatio?: number;
       processVictory(): void;
       processDefeat(): void;
       processEscape(): boolean;

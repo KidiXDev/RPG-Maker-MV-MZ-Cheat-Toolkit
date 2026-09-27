@@ -579,12 +579,12 @@ func injectLoader(content string, diagnostic bool) string {
 
 	var result strings.Builder
 	for i, line := range lines {
+		if i == insertIndex {
+			result.WriteString(loaderBlock)
+		}
 		result.WriteString(line)
 		if i < len(lines)-1 {
 			result.WriteString(newline)
-		}
-		if i == insertIndex {
-			result.WriteString(loaderBlock)
 		}
 	}
 	return result.String()

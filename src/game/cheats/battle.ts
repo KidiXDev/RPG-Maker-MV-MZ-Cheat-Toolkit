@@ -105,10 +105,13 @@ export function forceBattleResult(result: 'victory' | 'defeat' | 'escape' | 'abo
   }
 
   if (result === 'victory') {
+    setEnemiesHp(0);
     battleManager.processVictory();
   } else if (result === 'defeat') {
+    setPartyHp(0);
     battleManager.processDefeat();
   } else if (result === 'escape') {
+    battleManager._escapeRatio = 1;
     battleManager.processEscape();
   } else {
     battleManager.abort();

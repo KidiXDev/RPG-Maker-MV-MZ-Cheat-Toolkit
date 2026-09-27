@@ -92,15 +92,9 @@ function stripLoader(content) {
   return content.slice(0, start) + content.slice(blockEnd + (nextNewline?.[0].length ?? 0));
 }
 
-function injectLoader(content, options = {}) {
+export function injectLoader(content, options = {}) {
+  content = stripLoader(content);
   const loaderBlock = buildLoaderBlock(options);
-  const start = content.indexOf(MARKER_START);
-  const end = content.indexOf(MARKER_END);
-
-  if (start !== -1 && end !== -1) {
-    const blockEnd = end + MARKER_END.length;
-    return content.slice(0, start) + loaderBlock + content.slice(blockEnd);
-  }
 
   const lines = content.split(/\r?\n/);
   const newline = content.includes('\r\n') ? '\r\n' : '\n';
@@ -112,7 +106,7 @@ function injectLoader(content, options = {}) {
     })
   );
 
-  lines.splice(insertAfter + 1, 0, loaderBlock);
+  lines.splice(insertAfter, 0, loaderBlock);
   return lines.join(newline);
 }
 
@@ -241,4 +235,6 @@ async function main() {
   }
 }
 
-main();
+if (process.argv[1] === __filename) {
+  main();
+}
